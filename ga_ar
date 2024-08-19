@@ -73,6 +73,19 @@ $result = $sql->get_result();
             font-size: 18px;
         }
     </style>
+    <script>
+        function printKwitansi(rowId) {
+            var divToPrint = document.querySelector('.kwitansi-container[data-id="' + rowId + '"]');
+            var newWin = window.open('');
+            newWin.document.write('<html><head><title>Cetak Kwitansi</title>');
+            newWin.document.write('<style>' + document.querySelector('style').innerHTML + '</style>');
+            newWin.document.write('</head><body>');
+            newWin.document.write(divToPrint.outerHTML);
+            newWin.document.write('</body></html>');
+            newWin.document.close();
+            newWin.print();
+        }
+    </script>
 </head>
 <body>
     <div class="container mt-5">
@@ -105,7 +118,7 @@ $result = $sql->get_result();
                                 <td>" . htmlspecialchars($row['terbilang']) . "</td>
                                 <td>" . htmlspecialchars($row['untuk_pembayaran']) . "</td>
                                 <td>
-                                    <button onclick=\"window.location.href='gambar.php?id=" . $row['id'] . "'\" class='btn btn-primary'>Cetak</button>
+                                    <button onclick='printKwitansi($rowId)' class='btn btn-primary'>Cetak</button>
                                 </td>
                             </tr>";
                         

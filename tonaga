@@ -192,7 +192,7 @@ $dataKasbon = query("SELECT * FROM kasbon
     <body>
 
     <div class="gambar-text-container">
-        <img width=95% src="../gambar/template_kasbon/Form Kasbon_page-0001.jpg" alt="">
+        <img width=95% src="../gambar/template_kasbon/Form Kwitansi.jpg" alt="">
         <div class="text-overlay">
             <div class="container-row1">
                 <div class="container-nama-nilai">
@@ -262,7 +262,7 @@ $dataKasbon = query("SELECT * FROM kasbon
         </div>
     </div>
 
-    <script>
+    <script>       
         window.print();
         // Event listener untuk mendeteksi selesai mencetak
         window.addEventListener("afterprint", function() {
