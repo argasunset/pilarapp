@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AdminLTE 3 | Dashboard 2</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
 <link rel="stylesheet" href="adminLTE/plugins/fontawesome-free/css/all.min.css">
 
 <link rel="stylesheet" href="adminLTE/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <link rel="stylesheet" href="adminLTE/dist/css/adminlte.min.css?v=3.2.0">
 </head>
@@ -331,7 +331,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['toggle_status'])) {
     $current_status = $_POST['current_status'];
     $new_status = ($current_status == 'Aktif') ? 'Tidak Aktif' : 'Aktif';
 
-    $sql_update = "UPDATE pelanggan SET status='$new_status' WHERE id='$id'";
+    $sql_update = "UPDATE barang SET status='$new_status' WHERE id='$id'";
     if ($conn->query($sql_update) === TRUE) {
         echo json_encode(['success' => true]);
     } else {
@@ -340,17 +340,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['toggle_status'])) {
     exit();
 }
 
-// Mengambil data pelanggan untuk dropdown
-$sql = "SELECT id, nama_pelanggan FROM pelanggan";
+// Mengambil data barang untuk dropdown (jika ada)
+$sql = "SELECT id, nama_barang FROM barang";
 $result = $conn->query($sql);
 
-$pelanggan_options = "";
+$barang_options = "";
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $pelanggan_options .= "<option value='{$row['id']}'>{$row['nama_pelanggan']}</option>";
+        $barang_options .= "<option value='{$row['id']}'>{$row['nama_barang']}</option>";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -358,202 +357,117 @@ if ($result->num_rows > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Pelanggan</title>
+    <title>Data Barang</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
     <div class="container">
-        <h2>Data Pelanggan</h2>
+        <h2>Data Barang</h2>
         <div class="mb-3">
-            <button class="btn btn-primary" data-toggle="modal" data-target="#tambahPelangganModal">Tambah Pelanggan</button>
-            <button class="btn btn-secondary" data-toggle="modal" data-target="#inputPembayaranModal">Input Pembayaran</button>
-            <input type="text" id="search" class="form-control mt-3" placeholder="Cari berdasarkan nama pelanggan">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#tambahBarangModal">Tambah Barang</button>
         </div>
-        <table class="table table-bordered mt-3" id="pelangganTable">
+        <table class="table table-bordered mt-3" id="barangTable">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Nama Pelanggan</th>
-                    <th>No WA</th>
-                    <th>Alamat</th>
-                    <th>Paket Wifi</th>
-                    <th>Tanggal Aktivasi</th>
-                    <th>Status</th>
-                    <th>History Pembayaran</th>
+                    <th>Tanggal</th>
+                    <th>Nama Barang</th>
+                    <th>Harga Satuan</th>
+                    <th>Qty</th>
+                    <th>Total Harga</th>
+                    <th>Deskripsi</th>
                 </tr>
             </thead>
             <tbody>
-                <?php
-                $conn = new mysqli("localhost", "root", "", "pilarapp");
-
-                if ($conn->connect_error) {
-                    die("Koneksi gagal: " . $conn->connect_error);
-                }
-
-                $sql = "SELECT p.id, p.nama_pelanggan, p.no_wa, p.alamat, p.paket_wifi, p.tanggal_aktivasi, p.status, COUNT(pb.id) AS jumlah_pembayaran
-                        FROM pelanggan p
-                        LEFT JOIN pembayaran pb ON p.id = pb.pelanggan_id
-                        GROUP BY p.nama_pelanggan ASC";
-                $result = $conn->query($sql);
-                if ($result->num_rows > 0) {
-                    $no = 1;
-                    while ($row = $result->fetch_assoc()) {
-                        $statusButtonClass = $row['status'] == 'Aktif' ? 'btn-success' : 'btn-danger';
-                        echo "<tr>
-                                <td>" . $no++ . "</td>
-                                <td>" . $row['nama_pelanggan'] . "</td>
-                                <td>" . $row['no_wa'] . "</td>
-                                <td>" . $row['alamat'] . "</td>
-                                <td>" . $row['paket_wifi'] . "</td>
-                                <td>" . $row['tanggal_aktivasi'] . "</td>
-                                <td>
-                                    <button id='status-button-" . $row['id'] . "' 
-                                            class='btn $statusButtonClass' 
-                                            onclick='toggleStatus(" . $row['id'] . ", \"" . $row['status'] . "\")'>" . $row['status'] . "</button>
-                                </td>
-                                <td><a href='history_pembayaran.php?id=" . $row['id'] . "' class='btn btn-primary'>Klik di sini</a></td>
-                            </tr>";
-                    }
-                }
-                $conn->close();
-                ?>
-            </tbody>
+    <?php
+    $sql = "SELECT tanggal, nama_barang, harga_satuan, qty, total_harga, deskripsi FROM barang";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        $no = 1;
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>
+                    <td>" . $no++ . "</td>
+                    <td>" . $row['tanggal'] . "</td>
+                    <td>" . $row['nama_barang'] . "</td>
+                    <td>" . number_format($row['harga_satuan'], 2) . "</td>
+                    <td>" . $row['qty'] . "</td>
+                    <td>" . number_format($row['total_harga'], 2) . "</td>
+                    <td>" . $row['deskripsi'] . "</td>
+                </tr>";
+        }
+    } else {
+        echo "<tr><td colspan='7'>Tidak ada data</td></tr>";
+    }
+    $conn->close();
+    ?>
+    </tbody>
         </table>
     </div>
 
-    <!-- Modal Tambah Pelanggan -->
-    <div class="modal fade" id="tambahPelangganModal" tabindex="-1" role="dialog" aria-labelledby="tambahPelangganLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tambahPelangganLabel">Tambah Pelanggan</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="tambah_pelanggan.php" method="POST">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="nama">Nama</label>
-                            <input type="text" class="form-control" id="nama" name="nama" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="no_wa">No WA</label>
-                            <input type="text" class="form-control" id="no_wa" name="no_wa" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="alamat">Alamat</label>
-                            <input type="text" class="form-control" id="alamat" name="alamat" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="paket_wifi">Paket Wifi</label>
-                            <input type="text" class="form-control" id="paket_wifi" name="paket_wifi" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="tanggal_aktivasi">Tanggal Aktivasi</label>
-                            <input type="date" class="form-control" id="tanggal_aktivasi" name="tanggal_aktivasi" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-   <!-- Modal Input Pembayaran -->
-<div class="modal fade" id="inputPembayaranModal" tabindex="-1" role="dialog" aria-labelledby="inputPembayaranLabel" aria-hidden="true">
+    <!-- Modal Tambah Barang -->
+<div class="modal fade" id="tambahBarangModal" tabindex="-1" role="dialog" aria-labelledby="tambahBarangLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="inputPembayaranLabel">Input Pembayaran</h5>
+                <h5 class="modal-title" id="tambahBarangLabel">Tambah Barang</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="savepembayaran.php" method="post" enctype="multipart/form-data" id="paymentForm">
+            <form action="tambah_barang.php" method="POST">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="pelanggan_id">Nama Pelanggan:</label>
-                        <select name="pelanggan_id" id="pelanggan_id" class="form-control" required>
-                            <option value="">Pilih Pelanggan</option>
-                            <?php echo $pelanggan_options; ?>
-                        </select>
+                        <label for="tanggal">Tanggal</label>
+                        <input type="date" class="form-control" id="tanggal" name="tanggal" required>
                     </div>
                     <div class="form-group">
-                        <label for="tanggalPembayaran">Tanggal Pembayaran:</label>
-                        <input type="date" name="tanggalPembayaran" id="tanggalPembayaran" class="form-control" required>
+                        <label for="nama_barang">Nama Barang</label>
+                        <input type="text" class="form-control" id="nama_barang" name="nama_barang" required>
                     </div>
                     <div class="form-group">
-                        <label for="nominalBayar">Nominal Bayar:</label>
-                        <input type="number" name="nominalBayar" id="nominalBayar" class="form-control" required>
+                        <label for="harga_satuan">Harga Satuan</label>
+                        <input type="number" step="0.01" class="form-control" id="harga_satuan" name="harga_satuan" required>
                     </div>
                     <div class="form-group">
-                        <label for="kurangBayar">Kurang Bayar:</label>
-                        <input type="number" name="kurangBayar" id="kurangBayar" class="form-control" required>
+                        <label for="qty">Qty</label>
+                        <input type="number" class="form-control" id="qty" name="qty" required>
                     </div>
                     <div class="form-group">
-                        <label for="terbilang">Terbilang:</label>
-                        <input type="text" name="terbilang" id="terbilang" class="form-control" required>
+                        <label for="deskripsi">Deskripsi</label>
+                        <textarea class="form-control" id="deskripsi" name="deskripsi"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label for="untukPembayaran">Untuk Pembayaran:</label>
-                        <input type="text" name="untukPembayaran" id="untukPembayaran" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="buktiTf">Bukti Transfer:</label>
-                        <input type="file" name="buktiTf" id="buktiTf" class="form-control-file" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#paymentForm').on('submit', function(event) {
-                event.preventDefault();
-                var formData = new FormData(this);
-                $.ajax({
-                    url: 'savepembayaran.php',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Sukses',
-                            text: 'Data berhasil disimpan'
-                        }).then(function() {
-                            $('#inputPembayaranModal').modal('hide');
-                            // Reload data table if necessary, e.g.:
-                            // location.reload();
-                        });
-                    },
-                    error: function(response) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Terjadi kesalahan, coba lagi nanti'
-                        });
-                    }
+            // Fungsi pencarian
+            $('#search').on('keyup', function() {
+                var searchText = $(this).val().toLowerCase();
+                $('#barangTable tbody tr').each(function() {
+                    var rowText = $(this).text().toLowerCase();
+                    $(this).toggle(rowText.indexOf(searchText) > -1);
                 });
             });
         });
 
+        // Toggle status function, if needed for other tables
         function toggleStatus(id, currentStatus) {
             $.ajax({
-                url: 'data_pelanggan.php',
+                url: 'data_barang.php',
                 type: 'POST',
                 data: {
                     toggle_status: true,
@@ -580,55 +494,6 @@ if ($result->num_rows > 0) {
                 }
             });
         }
-         // Search function
-    $('#search').on('keyup', function() {
-        var searchText = $(this).val().toLowerCase();
-        $('#pelangganTable tbody tr').each(function() {
-            var rowText = $(this).text().toLowerCase();
-            $(this).toggle(rowText.indexOf(searchText) > -1);
-        });
-    });
     </script>
-</div>
-   
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
-<script>
-function toggleStatus(userId, currentStatus) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "", true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-            if (response.success) {
-                var button = document.getElementById('status-button-' + userId);
-                if (currentStatus == 'Aktif') {
-                    button.classList.remove('btn-success');
-                    button.classList.add('btn-danger');
-                    button.textContent = 'Tidak Aktif';
-                    button.setAttribute('onclick', 'toggleStatus(' + userId + ', "Tidak Aktif")');
-                } else {
-                    button.classList.remove('btn-danger');
-                    button.classList.add('btn-success');
-                    button.textContent = 'Aktif';
-                    button.setAttribute('onclick', 'toggleStatus(' + userId + ', "Aktif")');
-                }
-            } else {
-                alert('Gagal mengubah status: ' + response.error);
-            }
-        }
-    };
-    xhr.send("toggle_status=1&id=" + userId + "&current_status=" + currentStatus);
-}
-
-function setPelangganId(id, nama) {
-    document.getElementById('pelanggan_id').value = id;
-    document.getElementById('nama').value = nama;
-}
-
-</script>
 </body>
 </html>

@@ -8,6 +8,8 @@
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 <link rel="stylesheet" href="adminLTE/plugins/fontawesome-free/css/all.min.css">
 
 <link rel="stylesheet" href="adminLTE/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
@@ -207,9 +209,17 @@ Dashboard
 </li>
 <li class="nav-item">
 <a href="internet_home.php" class="nav-link">
-<i class="nav-icon fas fa-th"></i>
+<i class="fa-solid fa-wifi"></i>
 <p>
 Internet Home
+</p>
+</a>
+</li>
+<li class="nav-item">
+<a href="data_barang.php" class="nav-link">
+<i class="fas fa-box"></i>
+<p>
+Data Barang
 </p>
 </a>
 </li>

@@ -5,6 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AdminLTE 3 | Calendar</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
@@ -194,7 +195,7 @@ Dashboard
 </a>
 <ul class="nav nav-treeview">
 <li class="nav-item">
-<a href="adminLTE/index2.html" class="nav-link">
+<a href="dashboard_admin.php" class="nav-link">
 <i class="far fa-circle nav-icon"></i>
 <p>Dashboard</p>
 </a>
@@ -203,9 +204,17 @@ Dashboard
 </li>
 <li class="nav-item">
 <a href="internet_home.php" class="nav-link">
-<i class="nav-icon fas fa-th"></i>
+<i class="fa-solid fa-wifi"></i>
 <p>
 Internet Home
+</p>
+</a>
+</li>
+<li class="nav-item">
+<a href="data_barang.php" class="nav-link">
+<i class="fas fa-box"></i>
+<p>
+Data Barang
 </p>
 </a>
 </li>
