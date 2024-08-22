@@ -365,9 +365,9 @@ if ($result->num_rows > 0) {
 <div class="wrapper">
     <div class="container">
         <h2>Data Barang</h2>
-        <div class="mb-3">
-            <button class="btn btn-primary" data-toggle="modal" data-target="#tambahBarangModal">Tambah Barang</button>
-        </div>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#filterModal">Filter Tanggal</button>
+        <button class="btn btn-success" data-toggle="modal" data-target="#tambahBarangModal">Tambah Barang</button>
+        
         <table class="table table-bordered mt-3" id="barangTable">
             <thead>
                 <tr>
@@ -381,72 +381,72 @@ if ($result->num_rows > 0) {
                 </tr>
             </thead>
             <tbody>
-    <?php
-    $sql = "SELECT tanggal, nama_barang, harga_satuan, qty, total_harga, deskripsi FROM barang";
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-        $no = 1;
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>
-                    <td>" . $no++ . "</td>
-                    <td>" . $row['tanggal'] . "</td>
-                    <td>" . $row['nama_barang'] . "</td>
-                    <td>" . number_format($row['harga_satuan'], 2) . "</td>
-                    <td>" . $row['qty'] . "</td>
-                    <td>" . number_format($row['total_harga'], 2) . "</td>
-                    <td>" . $row['deskripsi'] . "</td>
-                </tr>";
-        }
-    } else {
-        echo "<tr><td colspan='7'>Tidak ada data</td></tr>";
-    }
-    $conn->close();
-    ?>
-    </tbody>
+                <!-- Isi tabel dengan data dari database -->
+            </tbody>
         </table>
     </div>
 
-    <!-- Modal Tambah Barang -->
-<div class="modal fade" id="tambahBarangModal" tabindex="-1" role="dialog" aria-labelledby="tambahBarangLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="tambahBarangLabel">Tambah Barang</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="tambah_barang.php" method="POST">
+    <!-- Modal Filter Tanggal -->
+    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterLabel">Filter Berdasarkan Tanggal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="tanggal">Tanggal</label>
-                        <input type="date" class="form-control" id="tanggal" name="tanggal" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="nama_barang">Nama Barang</label>
-                        <input type="text" class="form-control" id="nama_barang" name="nama_barang" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="harga_satuan">Harga Satuan</label>
-                        <input type="number" step="0.01" class="form-control" id="harga_satuan" name="harga_satuan" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="qty">Qty</label>
-                        <input type="number" class="form-control" id="qty" name="qty" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="deskripsi">Deskripsi</label>
-                        <textarea class="form-control" id="deskripsi" name="deskripsi"></textarea>
-                    </div>
+                    <form id="filterForm">
+                        <div class="form-group">
+                            <label for="startDate">Dari Tanggal</label>
+                            <input type="date" class="form-control" id="startDate" name="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">Sampai Dengan</label>
+                            <input type="date" class="form-control" id="endDate" name="endDate" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Modal Tambah Barang -->
+    <div class="modal fade" id="tambahBarangModal" tabindex="-1" role="dialog" aria-labelledby="tambahBarangLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tambahBarangLabel">Tambah Barang</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="tambahBarangForm">
+                        <div class="form-group">
+                            <label for="namaBarang">Nama Barang</label>
+                            <input type="text" class="form-control" id="namaBarang" name="namaBarang" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hargaSatuan">Harga Satuan</label>
+                            <input type="number" class="form-control" id="hargaSatuan" name="hargaSatuan" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="qty">Quantity</label>
+                            <input type="number" class="form-control" id="qty" name="qty" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="deskripsi">Deskripsi</label>
+                            <textarea class="form-control" id="deskripsi" name="deskripsi" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -454,46 +454,50 @@ if ($result->num_rows > 0) {
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Fungsi pencarian
-            $('#search').on('keyup', function() {
-                var searchText = $(this).val().toLowerCase();
-                $('#barangTable tbody tr').each(function() {
-                    var rowText = $(this).text().toLowerCase();
-                    $(this).toggle(rowText.indexOf(searchText) > -1);
-                });
+            // Fungsi filter berdasarkan tanggal
+            $('#filterForm').on('submit', function(e) {
+                e.preventDefault();
+                var startDate = $('#startDate').val();
+                var endDate = $('#endDate').val();
+                
+                if (startDate && endDate) {
+                    $('#barangTable tbody tr').each(function() {
+                        var rowDate = $(this).find('td').eq(1).text();
+                        if (rowDate >= startDate && rowDate <= endDate) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                } else {
+                    alert("Mohon pilih rentang tanggal yang valid.");
+                }
+
+                $('#filterModal').modal('hide');
+            });
+
+            // Fungsi tambah barang
+            $('#tambahBarangForm').on('submit', function(e) {
+                e.preventDefault();
+                var namaBarang = $('#namaBarang').val();
+                var hargaSatuan = $('#hargaSatuan').val();
+                var qty = $('#qty').val();
+                var deskripsi = $('#deskripsi').val();
+                var totalHarga = hargaSatuan * qty;
+
+                var newRow = `<tr>
+                                <td></td>
+                                <td>${new Date().toISOString().split('T')[0]}</td>
+                                <td>${namaBarang}</td>
+                                <td>${hargaSatuan}</td>
+                                <td>${qty}</td>
+                                <td>${totalHarga}</td>
+                                <td>${deskripsi}</td>
+                              </tr>`;
+                $('#barangTable tbody').append(newRow);
+                $('#tambahBarangModal').modal('hide');
             });
         });
-
-        // Toggle status function, if needed for other tables
-        function toggleStatus(id, currentStatus) {
-            $.ajax({
-                url: 'data_barang.php',
-                type: 'POST',
-                data: {
-                    toggle_status: true,
-                    id: id,
-                    current_status: currentStatus
-                },
-                success: function(response) {
-                    var data = JSON.parse(response);
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Sukses',
-                            text: 'Status berhasil diubah'
-                        }).then(function() {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Terjadi kesalahan, coba lagi nanti'
-                        });
-                    }
-                }
-            });
-        }
     </script>
 </body>
 </html>
