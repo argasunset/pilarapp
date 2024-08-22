@@ -182,7 +182,7 @@ $dataKasbon = query("SELECT * FROM kasbon
             .gambar-ttdacc{
                 margin-left: 110px;
             }
-
+          
             .gambar-ttdadmin{
                 margin-left: 10px;
             }

@@ -360,9 +360,8 @@ if ($result->num_rows > 0) {
         <div class="mb-3">
             <button class="btn btn-primary" data-toggle="modal" data-target="#tambahPelangganModal">Tambah Pelanggan</button>
             <button class="btn btn-secondary" data-toggle="modal" data-target="#inputPembayaranModal">Input Pembayaran</button>
-            <input type="text" id="search" class="form-control mt-3" placeholder="Cari berdasarkan nama pelanggan">
         </div>
-        <table class="table table-bordered mt-3" id="pelangganTable">
+        <table class="table table-bordered mt-3">
             <thead>
                 <tr>
                     <th>No</th>
@@ -384,11 +383,9 @@ if ($result->num_rows > 0) {
                 }
 
                 $sql = "SELECT p.id, p.nama_pelanggan, p.no_wa, p.alamat, p.paket_wifi, p.tanggal_aktivasi, p.status, COUNT(pb.id) AS jumlah_pembayaran
-        FROM pelanggan p
-        LEFT JOIN pembayaran pb ON p.id = pb.pelanggan_id
-        GROUP BY p.id
-        ORDER BY p.nama_pelanggan ASC";
-
+                        FROM pelanggan p
+                        LEFT JOIN pembayaran pb ON p.id = pb.pelanggan_id
+                        GROUP BY p.id";
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                     $no = 1;
@@ -402,7 +399,7 @@ if ($result->num_rows > 0) {
                                 <td>" . $row['paket_wifi'] . "</td>
                                 <td>" . $row['tanggal_aktivasi'] . "</td>
                                 <td>
-                                     <button id='status-button-" . $row['id'] . "' 
+                                    <button id='status-button-" . $row['id'] . "' 
                                             class='btn $statusButtonClass' 
                                             onclick='toggleStatus(" . $row['id'] . ", \"" . $row['status'] . "\")'>" . $row['status'] . "</button>
                                 </td>
@@ -512,84 +509,68 @@ if ($result->num_rows > 0) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-$(document).ready(function() {
-    // Handle form submission for payments
-    $('#paymentForm').on('submit', function(event) {
-        event.preventDefault();
-        var formData = new FormData(this);
-        $.ajax({
-            url: 'savepembayaran.php',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Sukses',
-                    text: 'Data berhasil disimpan'
-                }).then(function() {
-                    $('#inputPembayaranModal').modal('hide');
-                    // Reload data table if necessary, e.g.:
-                    // location.reload();
+        $(document).ready(function() {
+            $('#paymentForm').on('submit', function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: 'savepembayaran.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sukses',
+                            text: 'Data berhasil disimpan'
+                        }).then(function() {
+                            $('#inputPembayaranModal').modal('hide');
+                            // Reload data table if necessary, e.g.:
+                            // location.reload();
+                        });
+                    },
+                    error: function(response) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terjadi kesalahan, coba lagi nanti'
+                        });
+                    }
                 });
-            },
-            error: function(response) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Terjadi kesalahan, coba lagi nanti'
-                });
-            }
+            });
         });
-    });
 
-    // Handle status toggling
-    function toggleStatus(id, currentStatus) {
-        $.ajax({
-            url: 'data_pelanggan.php',
-            type: 'POST',
-            data: {
-                toggle_status: true,
-                id: id,
-                current_status: currentStatus
-            },
-            success: function(response) {
-                var data = JSON.parse(response);
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Sukses',
-                        text: 'Status berhasil diubah'
-                    }).then(function() {
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan, coba lagi nanti'
-                    });
+        function toggleStatus(id, currentStatus) {
+            $.ajax({
+                url: 'data_pelanggan.php',
+                type: 'POST',
+                data: {
+                    toggle_status: true,
+                    id: id,
+                    current_status: currentStatus
+                },
+                success: function(response) {
+                    var data = JSON.parse(response);
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sukses',
+                            text: 'Status berhasil diubah'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terjadi kesalahan, coba lagi nanti'
+                        });
+                    }
                 }
-            }
-        });
-    }
-
-    // Toggle status function
-    window.toggleStatus = toggleStatus;
-
-    // Search function
-    $('#search').on('keyup', function() {
-        var searchText = $(this).val().toLowerCase();
-        $('#pelangganTable tbody tr').each(function() {
-            var rowText = $(this).text().toLowerCase();
-            $(this).toggle(rowText.indexOf(searchText) > -1);
-        });
-    });
-});
-</script>
-
-
+            });
+        }
+    </script>
 </div>
    
 

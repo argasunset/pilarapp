@@ -88,13 +88,14 @@ $result = $sql->get_result();
                     <th>Bukti Transfer</th>
                     <th>Terbilang</th>
                     <th>Untuk Pembayaran</th>
+                    <th>Action</th> <!-- Kolom Action baru -->
                     <th>Cetak</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 if ($result->num_rows > 0) {
-                    $rowId = 1;
+                    $rowId = 1; // Inisialisasi variabel rowId
                     while ($row = $result->fetch_assoc()) {
                         echo "<tr>
                                 <td>" . htmlspecialchars($row['tanggal_pembayaran']) . "</td>
@@ -104,6 +105,9 @@ $result = $sql->get_result();
                                 <td><a href='uploads/" . htmlspecialchars($row['bukti_tf']) . "' target='_blank'>Lihat Bukti</a></td>
                                 <td>" . htmlspecialchars($row['terbilang']) . "</td>
                                 <td>" . htmlspecialchars($row['untuk_pembayaran']) . "</td>
+                                <td>
+                                    <a href='delete.php?id=" . $row['id'] . "&pelanggan_id=" . $pelanggan_id . "' class='btn btn-danger btn-sm' onclick=\"return confirm('Apakah Anda yakin ingin menghapus data ini?');\">Delete</a>
+                                </td>
                                 <td>
                                     <button onclick=\"window.location.href='gambar.php?id=" . $row['id'] . "'\" class='btn btn-primary'>Cetak</button>
                                 </td>
@@ -117,15 +121,16 @@ $result = $sql->get_result();
                                 <div class='kwitansi-text untuk-pembayaran'>" . htmlspecialchars($row['untuk_pembayaran']) . "</div>
                             </div>";
                         
-                        $rowId++;
+                        $rowId++; // Increment rowId
                     }
                 } else {
-                    echo "<tr><td colspan='8'>Tidak ada data pembayaran yang ditemukan.</td></tr>";
+                    echo "<tr><td colspan='9'>Tidak ada data pembayaran yang ditemukan.</td></tr>";
                 }
                 ?>
             </tbody>
         </table>
-        <a href="javascript:history.back()" class="btn btn-secondary">Kembali</a>
+        <a href="internet_home.php" class="btn btn-secondary">Kembali</a>
+
     </div>
 </body>
 </html>
