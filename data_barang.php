@@ -415,12 +415,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteBarang'])) {
                 echo "<td>" . $row['qty'] . "</td>";
                 echo "<td>" . number_format($row['total_harga'], 0, ',', '.') . "</td>";
                 echo "<td>" . $row['deskripsi'] . "</td>";
-                echo "<td>
-                        <form method='POST' style='display:inline;'>
-                            <input type='hidden' name='barang_id' value='" . $row['id'] . "'>
-                            <button type='submit' name='deleteBarang' class='btn btn-danger btn-sm'>Delete</button>
-                        </form>
-                      </td>";
+                echo "<td> 
+                <form method='POST' style='display:inline;' onsubmit='return confirmDelete();'>
+                    <input type='hidden' name='barang_id' value='" . $row['id'] . "'>
+                    <button type='submit' name='deleteBarang' class='btn btn-danger btn-sm'>Delete</button>
+                            </form>
+                        </td>";
                 echo "</tr>";
             }
         } else {
@@ -499,21 +499,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteBarang'])) {
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
 
-    <script>
-        // SweetAlert for success messages
-        <?php if ($successMessage): ?>
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '<?php echo $successMessage; ?>',
-            timer: 2000,
-            showConfirmButton: false
-        });
-        <?php endif; ?>
-    </script>
+<script>
+function confirmDelete() {
+    return confirm("Apakah Anda yakin ingin menghapus barang ini?");
+}
+
+// SweetAlert for success messages
+<?php if ($successMessage): ?>
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil!',
+    text: '<?php echo $successMessage; ?>',
+    timer: 2000,
+    showConfirmButton: false
+});
+<?php endif; ?>
+</script>
+
+
 </body>
 </html>
