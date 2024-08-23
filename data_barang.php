@@ -327,7 +327,7 @@ if ($conn->connect_error) {
 
 $successMessage = "";  // Variabel untuk menyimpan pesan sukses
 
-// Proses data ketika form di-submit
+// Proses data ketika form di-submit untuk menambah barang
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
     $tanggal = $_POST['tanggal'];  // Inisialisasi variabel tanggal dari form input
     $namaBarang = $_POST['namaBarang'];
@@ -348,7 +348,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
         echo "Error: " . $sql_insert . "<br>" . $conn->error;
     }
 }
+
+// Proses data ketika form di-submit untuk menghapus barang
+// Proses data ketika form di-submit untuk menghapus barang
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteBarang'])) {
+    $barang_id = $_POST['barang_id'];
+
+    // Query untuk menghapus data dari tabel barang
+    $sql_delete = "DELETE FROM barang WHERE id='$barang_id'";
+
+    // Debug statement
+    var_dump($sql_delete); // Lihat query yang akan dijalankan
+
+    if ($conn->query($sql_delete) === TRUE) {
+        $successMessage = "Data barang berhasil dihapus";
+    } else {
+        echo "Error: " . $sql_delete . "<br>" . $conn->error; // Tampilkan error
+    }
+}
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -367,42 +387,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
         <button class="btn btn-success" data-toggle="modal" data-target="#tambahBarangModal">Tambah Barang</button>
         
         <table class="table table-bordered mt-3" id="barangTable">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Tanggal</th>
-                    <th>Nama Barang</th>
-                    <th>Harga Satuan</th>
-                    <th>Qty</th>
-                    <th>Total Harga</th>
-                    <th>Deskripsi</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Ambil data dari tabel barang dan tampilkan di tabel HTML
-                $sql_select = "SELECT * FROM barang ORDER BY tanggal DESC";
-                $result = $conn->query($sql_select);
-                if ($result->num_rows > 0) {
-                    $no = 1;
-                    while($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . $no++ . "</td>";
-                        echo "<td>" . $row['tanggal'] . "</td>";
-                        echo "<td>" . $row['nama_barang'] . "</td>";
-                        echo "<td>" . number_format($row['harga_satuan'], 0, ',', '.') . "</td>";
-                        echo "<td>" . $row['qty'] . "</td>";
-                        echo "<td>" . number_format($row['total_harga'], 0, ',', '.') . "</td>";
-                        echo "<td>" . $row['deskripsi'] . "</td>";
-                        echo "</tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='7'>Tidak ada data barang</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>Nama Barang</th>
+            <th>Harga Satuan</th>
+            <th>Qty</th>
+            <th>Total Harga</th>
+            <th>Deskripsi</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        // Ambil data dari tabel barang dan tampilkan di tabel HTML
+        $sql_select = "SELECT * FROM barang ORDER BY tanggal DESC";
+        $result = $conn->query($sql_select);
+        if ($result->num_rows > 0) {
+            $no = 1;
+            while($row = $result->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . $no++ . "</td>";
+                echo "<td>" . $row['tanggal'] . "</td>";
+                echo "<td>" . $row['nama_barang'] . "</td>";
+                echo "<td>" . number_format($row['harga_satuan'], 0, ',', '.') . "</td>";
+                echo "<td>" . $row['qty'] . "</td>";
+                echo "<td>" . number_format($row['total_harga'], 0, ',', '.') . "</td>";
+                echo "<td>" . $row['deskripsi'] . "</td>";
+                echo "<td>
+                        <form method='POST' style='display:inline;'>
+                            <input type='hidden' name='barang_id' value='" . $row['id'] . "'>
+                            <button type='submit' name='deleteBarang' class='btn btn-danger btn-sm'>Delete</button>
+                        </form>
+                      </td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='8'>Tidak ada data barang</td></tr>";
+        }
+        ?>
+    </tbody>
+</table>
+
     </div>
 
     <!-- Modal Filter Tanggal -->
@@ -477,6 +504,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
 
     <script>
+        // SweetAlert for success messages
         <?php if ($successMessage): ?>
         Swal.fire({
             icon: 'success',
