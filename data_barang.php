@@ -327,16 +327,18 @@ if ($conn->connect_error) {
 
 // Proses data ketika form di-submit
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
+    $tanggal = $_POST['tanggal'];  // Inisialisasi variabel tanggal dari form input
     $namaBarang = $_POST['namaBarang'];
     $hargaSatuan = $_POST['hargaSatuan'];
     $qty = $_POST['qty'];
+    $deskripsi = $_POST['deskripsi'];
 
     // Hitung total harga
     $totalHarga = $hargaSatuan * $qty;
 
     // Query untuk memasukkan data ke tabel barang
-    $sql_insert = "INSERT INTO barang (tanggal, nama_barang, harga_satuan, qty, total_harga) 
-                   VALUES ('$tanggal', '$namaBarang', '$hargaSatuan', '$qty', '$totalHarga')";
+    $sql_insert = "INSERT INTO barang (tanggal, nama_barang, harga_satuan, qty, total_harga, deskripsi) 
+                   VALUES ('$tanggal', '$namaBarang', '$hargaSatuan', '$qty', '$totalHarga', '$deskripsi')";
 
     if ($conn->query($sql_insert) === TRUE) {
         echo "Data barang berhasil ditambahkan";
@@ -345,7 +347,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -376,7 +377,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
                 </tr>
             </thead>
             <tbody>
-                <!-- Isi tabel dengan data dari database -->
+                <?php
+                // Ambil data dari tabel barang dan tampilkan di tabel HTML
+                $sql_select = "SELECT * FROM barang ORDER BY tanggal DESC";
+                $result = $conn->query($sql_select);
+                if ($result->num_rows > 0) {
+                    $no = 1;
+                    while($row = $result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . $no++ . "</td>";
+                        echo "<td>" . $row['tanggal'] . "</td>";
+                        echo "<td>" . $row['nama_barang'] . "</td>";
+                        echo "<td>" . number_format($row['harga_satuan'], 0, ',', '.') . "</td>";
+                        echo "<td>" . $row['qty'] . "</td>";
+                        echo "<td>" . number_format($row['total_harga'], 0, ',', '.') . "</td>";
+                        echo "<td>" . $row['deskripsi'] . "</td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='7'>Tidak ada data barang</td></tr>";
+                }
+                ?>
             </tbody>
         </table>
     </div>
@@ -419,9 +440,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="tambahBarangForm">
+                    <form method="POST" action="">
                         <div class="form-group">
-                            <label for="namaBarang">Tanggal</label>
+                            <label for="tanggal">Tanggal</label>
                             <input type="date" class="form-control" id="tanggal" name="tanggal" required>
                         </div>
                         <div class="form-group">
@@ -440,7 +461,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
                             <label for="deskripsi">Deskripsi</label>
                             <textarea class="form-control" id="deskripsi" name="deskripsi" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success">Simpan</button>
+                        <button type="submit" name="tambahBarang" class="btn btn-success">Simpan</button>
                     </form>
                 </div>
             </div>
@@ -451,57 +472,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            var no = 1; // Inisialisasi nomor urut
-
-            // Fungsi filter berdasarkan tanggal
-            $('#filterForm').on('submit', function(e) {
-                e.preventDefault();
-                var startDate = $('#startDate').val();
-                var endDate = $('#endDate').val();
-                
-                if (startDate && endDate) {
-                    $('#barangTable tbody tr').each(function() {
-                        var rowDate = $(this).find('td').eq(1).text();
-                        if (rowDate >= startDate && rowDate <= endDate) {
-                            $(this).show();
-                        } else {
-                            $(this).hide();
-                        }
-                    });
-                } else {
-                    alert("Mohon pilih rentang tanggal yang valid.");
-                }
-
-                $('#filterModal').modal('hide');
-            });
-
-            // Fungsi tambah barang
-            $('#tambahBarangForm').on('submit', function(e) {
-                e.preventDefault();
-                var namaBarang = $('#namaBarang').val();
-                var hargaSatuan = $('#hargaSatuan').val();
-                var qty = $('#qty').val();
-                var deskripsi = $('#deskripsi').val();
-                var totalHarga = hargaSatuan * qty;
-
-                // Format ribuan untuk total harga
-                var totalHargaFormatted = new Intl.NumberFormat('id-ID').format(totalHarga);
-
-                var newRow = `<tr>
-                                <td>${no++}</td>
-                                <td>${new Date().toISOString().split('T')[0]}</td>
-                                <td>${namaBarang}</td>
-                                <td>${new Intl.NumberFormat('id-ID').format(hargaSatuan)}</td>
-                                <td>${qty}</td>
-                                <td>${totalHargaFormatted}</td>
-                                <td>${deskripsi}</td>
-                              </tr>`;
-                $('#barangTable tbody').append(newRow);
-                $('#tambahBarangModal').modal('hide');
-            });
-        });
-    </script>
 </body>
 </html>
