@@ -325,6 +325,8 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
+$successMessage = "";  // Variabel untuk menyimpan pesan sukses
+
 // Proses data ketika form di-submit
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
     $tanggal = $_POST['tanggal'];  // Inisialisasi variabel tanggal dari form input
@@ -341,7 +343,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
                    VALUES ('$tanggal', '$namaBarang', '$hargaSatuan', '$qty', '$totalHarga', '$deskripsi')";
 
     if ($conn->query($sql_insert) === TRUE) {
-        echo "Data barang berhasil ditambahkan";
+        $successMessage = "Data barang berhasil ditambahkan";  // Set pesan sukses
     } else {
         echo "Error: " . $sql_insert . "<br>" . $conn->error;
     }
@@ -374,6 +376,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
                     <th>Qty</th>
                     <th>Total Harga</th>
                     <th>Deskripsi</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -472,5 +475,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
+
+    <script>
+        <?php if ($successMessage): ?>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '<?php echo $successMessage; ?>',
+            timer: 2000,
+            showConfirmButton: false
+        });
+        <?php endif; ?>
+    </script>
 </body>
 </html>
