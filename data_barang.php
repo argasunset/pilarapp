@@ -366,7 +366,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteBarang'])) {
         echo "Error: " . $sql_delete . "<br>" . $conn->error; // Tampilkan error
     }
 }
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filter'])) {
+    $startDate = $_POST['startDate'];
+    $endDate = $_POST['endDate'];
 
+    // Query untuk mengambil data dari tabel barang berdasarkan tanggal
+    $sql_select = "SELECT * FROM barang WHERE tanggal BETWEEN '$startDate' AND '$endDate' ORDER BY tanggal DESC";
+    $result = $conn->query($sql_select);
+} else {
+    // Ambil semua data jika tidak ada filter
+    $sql_select = "SELECT * FROM barang ORDER BY tanggal DESC";
+    $result = $conn->query($sql_select);
+}
+
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $dataBarang[] = $row; // Simpan data barang ke array
+    }
+} else {
+    echo "<tr><td colspan='8'>Tidak ada data barang</td></tr>";
+}
 ?>
 
 
@@ -400,64 +419,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteBarang'])) {
         </tr>
     </thead>
     <tbody>
-        <?php
-        // Ambil data dari tabel barang dan tampilkan di tabel HTML
-        $sql_select = "SELECT * FROM barang ORDER BY tanggal DESC";
-        $result = $conn->query($sql_select);
-        if ($result->num_rows > 0) {
-            $no = 1;
-            while($row = $result->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td>" . $no++ . "</td>";
-                echo "<td>" . $row['tanggal'] . "</td>";
-                echo "<td>" . $row['nama_barang'] . "</td>";
-                echo "<td>" . number_format($row['harga_satuan'], 0, ',', '.') . "</td>";
-                echo "<td>" . $row['qty'] . "</td>";
-                echo "<td>" . number_format($row['total_harga'], 0, ',', '.') . "</td>";
-                echo "<td>" . $row['deskripsi'] . "</td>";
-                echo "<td> 
+    <?php
+    if (!empty($dataBarang)) {
+        $no = 1;
+        foreach ($dataBarang as $row) {
+            echo "<tr>";
+            echo "<td>" . $no++ . "</td>";
+            echo "<td>" . $row['tanggal'] . "</td>";
+            echo "<td>" . $row['nama_barang'] . "</td>";
+            echo "<td>" . number_format($row['harga_satuan'], 0, ',', '.') . "</td>";
+            echo "<td>" . $row['qty'] . "</td>";
+            echo "<td>" . number_format($row['total_harga'], 0, ',', '.') . "</td>";
+            echo "<td>" . $row['deskripsi'] . "</td>";
+            echo "<td>
                 <form method='POST' style='display:inline;' onsubmit='return confirmDelete();'>
                     <input type='hidden' name='barang_id' value='" . $row['id'] . "'>
                     <button type='submit' name='deleteBarang' class='btn btn-danger btn-sm'>Delete</button>
-                            </form>
-                        </td>";
-                echo "</tr>";
-            }
-        } else {
-            echo "<tr><td colspan='8'>Tidak ada data barang</td></tr>";
+                </form>
+            </td>";
+            echo "</tr>";
         }
-        ?>
-    </tbody>
+    } else {
+        echo "<tr><td colspan='8'>Tidak ada data barang</td></tr>";
+    }
+    ?>
+</tbody>
+
 </table>
 
     </div>
 
     <!-- Modal Filter Tanggal -->
     <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="filterLabel">Filter Berdasarkan Tanggal</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="filterForm">
-                        <div class="form-group">
-                            <label for="startDate">Dari Tanggal</label>
-                            <input type="date" class="form-control" id="startDate" name="startDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="endDate">Sampai Dengan</label>
-                            <input type="date" class="form-control" id="endDate" name="endDate" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Filter</button>
-                    </form>
-                </div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterLabel">Filter Berdasarkan Tanggal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="">
+                    <div class="form-group">
+                        <label for="startDate">Dari Tanggal</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Sampai Dengan</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" required>
+                    </div>
+                    <button type="submit" name="filter" class="btn btn-primary">Filter</button>
+                    <a href="download.php?startDate=" id="downloadButton" class="btn btn-success" style="display:none;">Download Excel</a>
+                </form>
             </div>
         </div>
     </div>
+</div>
+
 
     <!-- Modal Tambah Barang -->
     <div class="modal fade" id="tambahBarangModal" tabindex="-1" role="dialog" aria-labelledby="tambahBarangLabel" aria-hidden="true">
@@ -518,7 +537,24 @@ Swal.fire({
     showConfirmButton: false
 });
 <?php endif; ?>
+
+$('form').on('submit', function(event) {
+    event.preventDefault(); // Mencegah pengiriman form default
+
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+
+    // Memperbarui href tombol download dan menampilkannya
+    if (startDate && endDate) {
+        $('#downloadButton').attr('href', 'download.php?startDate=' + startDate + '&endDate=' + endDate).show();
+    } else {
+        $('#downloadButton').hide(); // Sembunyikan jika tidak ada tanggal
+    }
+    
+    this.submit(); // Mengirimkan form setelah memperbarui tombol download
+});
 </script>
+
 
 
 </body>
