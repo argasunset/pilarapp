@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 09, 2024 at 06:10 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Waktu pembuatan: 23 Agu 2024 pada 05.56
+-- Versi server: 10.4.28-MariaDB
+-- Versi PHP: 8.0.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,23 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pelanggan`
+-- Struktur dari tabel `barang`
+--
+
+CREATE TABLE `barang` (
+  `id` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `nama_barang` varchar(255) NOT NULL,
+  `harga_satuan` varchar(1000) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `total_harga` varchar(1000) GENERATED ALWAYS AS (`harga_satuan` * `qty`) STORED,
+  `deskripsi` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `pelanggan`
 --
 
 CREATE TABLE `pelanggan` (
@@ -38,7 +54,7 @@ CREATE TABLE `pelanggan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pelanggan`
+-- Dumping data untuk tabel `pelanggan`
 --
 
 INSERT INTO `pelanggan` (`id`, `nama_pelanggan`, `no_wa`, `alamat`, `paket_wifi`, `tanggal_aktivasi`, `status`) VALUES
@@ -95,33 +111,34 @@ INSERT INTO `pelanggan` (`id`, `nama_pelanggan`, `no_wa`, `alamat`, `paket_wifi`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pembayaran`
+-- Struktur dari tabel `pembayaran`
 --
 
 CREATE TABLE `pembayaran` (
   `id` int(11) NOT NULL,
   `pelanggan_id` int(11) DEFAULT NULL,
-  `nominal_bayar` decimal(10,2) DEFAULT NULL,
-  `kurang_bayar` decimal(10,2) DEFAULT NULL,
+  `nominal_bayar` varchar(50) DEFAULT NULL,
+  `kurang_bayar` varchar(50) DEFAULT NULL,
   `bukti_transfer` varchar(255) DEFAULT NULL,
   `terbilang` varchar(255) DEFAULT NULL,
   `untuk_pembayaran` varchar(255) DEFAULT NULL,
-  `tanggal_pembayaran` datetime DEFAULT NULL,
+  `tanggal_pembayaran` varchar(50) DEFAULT NULL,
   `bukti_tf` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pembayaran`
+-- Dumping data untuk tabel `pembayaran`
 --
 
 INSERT INTO `pembayaran` (`id`, `pelanggan_id`, `nominal_bayar`, `kurang_bayar`, `bukti_transfer`, `terbilang`, `untuk_pembayaran`, `tanggal_pembayaran`, `bukti_tf`) VALUES
-(2, 1, 111111.00, 1111.00, NULL, '11', '111', '1111-11-11 00:00:00', '7-helm-tercanggih-di-dunia-nomor-5-harganya-capai-rp5-6-miliar-DL457iEc5W.webp'),
-(3, 4, 1111.00, 1111.00, NULL, '1111', '11111', '1111-11-11 00:00:00', '7-helm-tercanggih-di-dunia-nomor-5-harganya-capai-rp5-6-miliar-DL457iEc5W.webp');
+(4, 3, '120.00', '80.00', NULL, 'SERATUS DUA PULUH RIBU', 'Wifi', '2024-08-01 00:00:00', 'Kwitansi.png'),
+(5, 1, '120.000', '80.000', NULL, 'SERATUS DUA PULUH RIBU', 'Wifi', '2024-08-01', 'Kwitansi.png'),
+(6, 2, '120.000', '80.000', NULL, 'SERATUS DUA PULUH RIBU', 'Wifi', '2024-08-21', 'Kwitansi.png');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Struktur dari tabel `user`
 --
 
 CREATE TABLE `user` (
@@ -132,7 +149,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `user`
+-- Dumping data untuk tabel `user`
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
@@ -145,52 +162,64 @@ INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
 --
 
 --
--- Indexes for table `pelanggan`
+-- Indeks untuk tabel `barang`
+--
+ALTER TABLE `barang`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `pelanggan`
 --
 ALTER TABLE `pelanggan`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `pembayaran`
+-- Indeks untuk tabel `pembayaran`
 --
 ALTER TABLE `pembayaran`
   ADD PRIMARY KEY (`id`),
   ADD KEY `pelanggan_id` (`pelanggan_id`);
 
 --
--- Indexes for table `user`
+-- Indeks untuk tabel `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `pelanggan`
+-- AUTO_INCREMENT untuk tabel `barang`
+--
+ALTER TABLE `barang`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `pelanggan`
 --
 ALTER TABLE `pelanggan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
--- AUTO_INCREMENT for table `pembayaran`
+-- AUTO_INCREMENT untuk tabel `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `user`
+-- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- Constraints for dumped tables
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Constraints for table `pembayaran`
+-- Ketidakleluasaan untuk tabel `pembayaran`
 --
 ALTER TABLE `pembayaran`
   ADD CONSTRAINT `pembayaran_ibfk_1` FOREIGN KEY (`pelanggan_id`) REFERENCES `pelanggan` (`id`);

@@ -325,32 +325,27 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-// Logika untuk mengubah status
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['toggle_status'])) {
-    $id = $_POST['id'];
-    $current_status = $_POST['current_status'];
-    $new_status = ($current_status == 'Aktif') ? 'Tidak Aktif' : 'Aktif';
+// Proses data ketika form di-submit
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambahBarang'])) {
+    $namaBarang = $_POST['namaBarang'];
+    $hargaSatuan = $_POST['hargaSatuan'];
+    $qty = $_POST['qty'];
 
-    $sql_update = "UPDATE barang SET status='$new_status' WHERE id='$id'";
-    if ($conn->query($sql_update) === TRUE) {
-        echo json_encode(['success' => true]);
+    // Hitung total harga
+    $totalHarga = $hargaSatuan * $qty;
+
+    // Query untuk memasukkan data ke tabel barang
+    $sql_insert = "INSERT INTO barang (tanggal, nama_barang, harga_satuan, qty, total_harga) 
+                   VALUES ('$tanggal', '$namaBarang', '$hargaSatuan', '$qty', '$totalHarga')";
+
+    if ($conn->query($sql_insert) === TRUE) {
+        echo "Data barang berhasil ditambahkan";
     } else {
-        echo json_encode(['success' => false, 'error' => $conn->error]);
-    }
-    exit();
-}
-
-// Mengambil data barang untuk dropdown (jika ada)
-$sql = "SELECT id, nama_barang FROM barang";
-$result = $conn->query($sql);
-
-$barang_options = "";
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $barang_options .= "<option value='{$row['id']}'>{$row['nama_barang']}</option>";
+        echo "Error: " . $sql_insert . "<br>" . $conn->error;
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -426,6 +421,10 @@ if ($result->num_rows > 0) {
                 <div class="modal-body">
                     <form id="tambahBarangForm">
                         <div class="form-group">
+                            <label for="namaBarang">Tanggal</label>
+                            <input type="date" class="form-control" id="tanggal" name="tanggal" required>
+                        </div>
+                        <div class="form-group">
                             <label for="namaBarang">Nama Barang</label>
                             <input type="text" class="form-control" id="namaBarang" name="namaBarang" required>
                         </div>
@@ -454,6 +453,8 @@ if ($result->num_rows > 0) {
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
     <script>
         $(document).ready(function() {
+            var no = 1; // Inisialisasi nomor urut
+
             // Fungsi filter berdasarkan tanggal
             $('#filterForm').on('submit', function(e) {
                 e.preventDefault();
@@ -485,13 +486,16 @@ if ($result->num_rows > 0) {
                 var deskripsi = $('#deskripsi').val();
                 var totalHarga = hargaSatuan * qty;
 
+                // Format ribuan untuk total harga
+                var totalHargaFormatted = new Intl.NumberFormat('id-ID').format(totalHarga);
+
                 var newRow = `<tr>
-                                <td></td>
+                                <td>${no++}</td>
                                 <td>${new Date().toISOString().split('T')[0]}</td>
                                 <td>${namaBarang}</td>
-                                <td>${hargaSatuan}</td>
+                                <td>${new Intl.NumberFormat('id-ID').format(hargaSatuan)}</td>
                                 <td>${qty}</td>
-                                <td>${totalHarga}</td>
+                                <td>${totalHargaFormatted}</td>
                                 <td>${deskripsi}</td>
                               </tr>`;
                 $('#barangTable tbody').append(newRow);
