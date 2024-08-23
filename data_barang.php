@@ -451,32 +451,32 @@ if ($result->num_rows > 0) {
 
     <!-- Modal Filter Tanggal -->
     <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="filterLabel">Filter Berdasarkan Tanggal</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" action="">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterLabel">Filter Berdasarkan Tanggal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="">
                     <div class="form-group">
                         <label for="startDate">Dari Tanggal</label>
                         <input type="date" class="form-control" id="startDate" name="startDate" required>
                     </div>
-                    <div class="form-group">
+                        <div class="form-group">
                         <label for="endDate">Sampai Dengan</label>
                         <input type="date" class="form-control" id="endDate" name="endDate" required>
-                    </div>
-                    <button type="submit" name="filter" class="btn btn-primary">Filter</button>
-                    <a href="download.php?startDate=" id="downloadButton" class="btn btn-success" style="display:none;">Download Excel</a>
-                </form>
+                        </div>
+                        <button type="submit" name="filter" class="btn btn-primary">Filter</button>
+                        
+                    </form>
+
+                </div>
             </div>
         </div>
     </div>
-</div>
-
 
     <!-- Modal Tambah Barang -->
     <div class="modal fade" id="tambahBarangModal" tabindex="-1" role="dialog" aria-labelledby="tambahBarangLabel" aria-hidden="true">
@@ -537,24 +537,7 @@ Swal.fire({
     showConfirmButton: false
 });
 <?php endif; ?>
-
-$('form').on('submit', function(event) {
-    event.preventDefault(); // Mencegah pengiriman form default
-
-    const startDate = $('#startDate').val();
-    const endDate = $('#endDate').val();
-
-    // Memperbarui href tombol download dan menampilkannya
-    if (startDate && endDate) {
-        $('#downloadButton').attr('href', 'download.php?startDate=' + startDate + '&endDate=' + endDate).show();
-    } else {
-        $('#downloadButton').hide(); // Sembunyikan jika tidak ada tanggal
-    }
-    
-    this.submit(); // Mengirimkan form setelah memperbarui tombol download
-});
 </script>
-
 
 
 </body>
