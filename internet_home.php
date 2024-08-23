@@ -368,7 +368,7 @@ if ($result->num_rows > 0) {
         <h2>Data Pelanggan</h2>
         <div class="mb-3">
             <button class="btn btn-primary" data-toggle="modal" data-target="#tambahPelangganModal">Tambah Pelanggan</button>
-            <button class="btn btn-secondary" data-toggle="modal" data-target="#inputPembayaranModal">Input Pembayaran</button>
+            <button class="btn btn-success" data-toggle="modal" data-target="#inputPembayaranModal">Input Pembayaran</button>
             <input type="text" id="search" class="form-control mt-3" placeholder="Cari berdasarkan nama pelanggan">
         </div>
         <table class="table table-bordered mt-3" id="pelangganTable">
