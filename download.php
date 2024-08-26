@@ -1,43 +1,51 @@
 <?php
+// Koneksi ke database
 $conn = new mysqli("localhost", "root", "", "pilarapp");
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-// Mendapatkan tanggal dari URL
-$startDate = $_GET['startDate'];
-$endDate = $_GET['endDate'];
+// Mendapatkan parameter tanggal dari URL
+$startDate = $_GET['startDate'] ?? null;
+$endDate = $_GET['endDate'] ?? null;
 
-// Query untuk mengambil data berdasarkan tanggal
-$sql_select = "SELECT * FROM barang WHERE tanggal BETWEEN '$startDate' AND '$endDate' ORDER BY tanggal DESC";
-$result = $conn->query($sql_select);
+// Query untuk mengambil data
+if ($startDate && $endDate) {
+    $sql_select = "SELECT * FROM barang WHERE tanggal BETWEEN ? AND ? ORDER BY tanggal DESC";
+    $stmt = $conn->prepare($sql_select);
+    $stmt->bind_param("ss", $startDate, $endDate); // Bind parameter untuk menghindari SQL injection
+} else {
+    $sql_select = "SELECT * FROM barang ORDER BY tanggal DESC";
+    $stmt = $conn->prepare($sql_select);
+}
 
-// Memulai pengunduhan file Excel
-header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment; filename="data_barang.xlsx"');
+$stmt->execute();
+$result = $stmt->get_result();
 
-// Memasukkan library PHPExcel
-require 'PHPExcel.php'; // Pastikan Anda telah mengunduh dan menyertakan library PHPExcel
+// Load PHPSpreadsheet
+require __DIR__ . '/vendor/autoload.php'; // Sesuaikan path jika perlu
 
-// Membuat objek PHPExcel
-$objPHPExcel = new PHPExcel();
-$objPHPExcel->setActiveSheetIndex(0);
-$sheet = $objPHPExcel->getActiveSheet();
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-// Menambahkan header kolom
-$sheet->setCellValue('A1', 'No');
-$sheet->setCellValue('B1', 'Tanggal');
-$sheet->setCellValue('C1', 'Nama Barang');
-$sheet->setCellValue('D1', 'Harga Satuan');
-$sheet->setCellValue('E1', 'Qty');
-$sheet->setCellValue('F1', 'Total Harga');
-$sheet->setCellValue('G1', 'Deskripsi');
+// Buat objek Spreadsheet baru
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
 
-// Mengisi data ke dalam file Excel
+// Set header kolom
+$headers = ['No', 'Tanggal', 'Nama Barang', 'Harga Satuan', 'Qty', 'Total Harga', 'Deskripsi'];
+$col = 'A';
+foreach ($headers as $header) {
+    $sheet->setCellValue($col . '1', $header);
+    $col++;
+}
+
+// Isi data
 $row = 2; // Mulai dari baris kedua
 if ($result->num_rows > 0) {
+    $no = 1;
     while ($data = $result->fetch_assoc()) {
-        $sheet->setCellValue('A' . $row, $row - 1);
+        $sheet->setCellValue('A' . $row, $no++);
         $sheet->setCellValue('B' . $row, $data['tanggal']);
         $sheet->setCellValue('C' . $row, $data['nama_barang']);
         $sheet->setCellValue('D' . $row, $data['harga_satuan']);
@@ -48,8 +56,20 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Menyimpan file Excel
-$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-$objWriter->save('php://output');
+// Set nama file
+$filename = 'Data_Barang_' . date('Ymd') . '.xlsx';
+
+// Atur header untuk unduh file
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment; filename="' . $filename . '"');
+header('Cache-Control: max-age=0');
+
+// Simpan ke output
+$writer = new Xlsx($spreadsheet);
+$writer->save('php://output');
+
+// Tutup koneksi
+$stmt->close();
+$conn->close();
 exit;
 ?>
