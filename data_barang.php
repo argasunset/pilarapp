@@ -443,6 +443,7 @@ if ($result->num_rows > 0) {
         echo "<tr><td colspan='8'>Tidak ada data barang</td></tr>";
     }
     ?>
+    
 </tbody>
 
 </table>
@@ -461,18 +462,17 @@ if ($result->num_rows > 0) {
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="">
-                    <div class="form-group">
-                        <label for="startDate">Dari Tanggal</label>
-                        <input type="date" class="form-control" id="startDate" name="startDate" required>
-                    </div>
                         <div class="form-group">
-                        <label for="endDate">Sampai Dengan</label>
-                        <input type="date" class="form-control" id="endDate" name="endDate" required>
+                            <label for="startDate">Dari Tanggal</label>
+                            <input type="date" class="form-control" id="startDate" name="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">Sampai Dengan</label>
+                            <input type="date" class="form-control" id="endDate" name="endDate" required>
                         </div>
                         <button type="submit" name="filter" class="btn btn-primary">Filter</button>
-                        
+                        <a href="download.php?startDate=" id="downloadButton" class="btn btn-success" style="display:none;">Download Excel</a>
                     </form>
-
                 </div>
             </div>
         </div>
@@ -517,28 +517,40 @@ if ($result->num_rows > 0) {
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
 
-<script>
-function confirmDelete() {
-    return confirm("Apakah Anda yakin ingin menghapus barang ini?");
-}
+    <script>
+        function confirmDelete() {
+            return confirm("Apakah Anda yakin ingin menghapus barang ini?");
+        }
 
-// SweetAlert for success messages
-<?php if ($successMessage): ?>
-Swal.fire({
-    icon: 'success',
-    title: 'Berhasil!',
-    text: '<?php echo $successMessage; ?>',
-    timer: 2000,
-    showConfirmButton: false
-});
-<?php endif; ?>
-</script>
+        // SweetAlert buat notifikasi sukses
+        <?php if ($successMessage): ?>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '<?php echo $successMessage; ?>',
+            timer: 2000,
+            showConfirmButton: false
+        });
+        <?php endif; ?>
 
-
+// Update tombol download
+$(document).ready(function() {
+        $('#startDate, #endDate').on('change', function() {
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+            if (startDate && endDate) {
+                $('#downloadButton').attr('href', 'download.php?startDate=' + startDate + '&endDate=' + endDate).show();
+            } else {
+                $('#downloadButton').hide(); // Sembunyikan jika salah satu tanggal belum diisi
+            }
+        });
+    });
+    </script>
+</div>
 </body>
 </html>
