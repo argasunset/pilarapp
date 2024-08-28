@@ -109,7 +109,7 @@ $result = $sql->get_result();
                                     <a href='delete.php?id=" . $row['id'] . "&pelanggan_id=" . $pelanggan_id . "' class='btn btn-danger btn-sm' onclick=\"return confirm('Apakah Anda yakin ingin menghapus data ini?');\">Delete</a>
                                 </td>
                                 <td>
-                                    <button onclick=\"window.location.href='gambar.php?id=" . $row['id'] . "'\" class='btn btn-primary'>Cetak</button>
+                                    <button onclick=\"window.location.href='printkwitansi.php?id=" . $row['id'] . "'\" class='btn btn-primary'>Cetak</button>
                                 </td>
                             </tr>";
                         

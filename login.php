@@ -1,91 +1,156 @@
+<?php
+session_start();
+
+// Database configuration
+$servername = "localhost";
+$username_db = "root"; // Ganti dengan username database Anda
+$password_db = ""; // Ganti dengan password database Anda
+$dbname = "pilarapp"; // Nama database sesuai yang ada di gambar
+
+// Create connection
+$conn = new mysqli($servername, $username_db, $password_db, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Initialize error message
+$error_message = '';
+
+// Periksa apakah form telah dikirim dengan metode POST
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get user input from form
+    if (isset($_POST['username']) && isset($_POST['password'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        // Lakukan sanitasi input
+        $username = $conn->real_escape_string($username);
+        $password = $conn->real_escape_string($password);
+
+        // Query to check user credentials
+        $sql = "SELECT id, username, role FROM user WHERE username = ? AND password = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ss', $username, $password);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Check if user exists and get their role
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            $_SESSION['id'] = $user['id'];
+            $_SESSION['username'] = $user['username']; // Tambahkan sesi untuk menyimpan nama pengguna
+            $_SESSION['role'] = $user['role'];
+
+            // Redirect based on role
+            if ($user['role'] == 'admin') {
+                header("Location: index.php");
+                exit;
+            } else {
+                $error_message = "Access denied. Only admins can log in.";
+            }
+        } else {
+            $error_message = "Invalid username or password.";
+        }
+
+        $stmt->close();
+    } else {
+        $error_message = "Please provide both username and password.";
+    }
+}
+
+$conn->close();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Log in (v2)</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="adminLTE/plugins/fontawesome-free/css/all.min.css">
-  <!-- icheck bootstrap -->
-  <link rel="stylesheet" href="adminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="adminLTE/dist/css/adminlte.min.css">
+    <title>SB Admin 2 - Login</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
 </head>
-<body class="hold-transition login-page">
-<div class="login-box">
-  <!-- /.login-logo -->
-  <div class="card card-outline card-primary">
-    <div class="card-header text-center">
-      <a href="adminLTE/index2.html" class="h1"><b>Admin</b>LTE</a>
-    </div>
-    <div class="card-body">
-      <p class="login-box-msg">Sign in to start your session</p>
 
-      <form action="dashboard_admin.php" method="post">
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Username">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
+<body>
+    <!-- Login Section -->
+    <section class="bg-light py-3 py-md-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+                    <div class="card border border-light-subtle rounded-3 shadow-sm">
+                        <div class="card-body p-3 p-md-4 p-xl-5">
+                            <h2 class="fs-6 fw-normal text-center text-secondary mb-4">Sign in to your account</h2>
+                            
+                            <!-- Display Error Message -->
+                            <?php if (!empty($error_message)): ?>
+                                <div class="alert alert-danger" role="alert">
+                                    <?php echo $error_message; ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <form action="login.php" method="post">
+                                <div class="row gy-2 overflow-hidden">
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" name="username" id="username" placeholder="Username" required>
+                                            <label for="username" class="form-label">Username</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                                            <label for="password" class="form-label">Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="d-flex gap-2 justify-content-between">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="rememberMe" id="rememberMe">
+                                                <label class="form-check-label text-secondary" for="rememberMe">
+                                                    Keep me logged in
+                                                </label>
+                                            </div>
+                                            <a href="forgot-password.php" class="link-primary text-decoration-none">Forgot password?</a>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="d-grid my-3">
+                                            <button class="btn btn-primary btn-lg" type="submit">Log in</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="m-0 text-secondary text-center">Don't have an account? <a href="#!" class="link-primary text-decoration-none">Sign up</a></p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Password">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-8">
-            <div class="icheck-primary">
-              <input type="checkbox" id="remember">
-              <label for="remember">
-                Remember Me
-              </label>
-            </div>
-          </div>
-          <!-- /.col -->
-          <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-          </div>
-          <!-- /.col -->
-        </div>
-      </form>
+    </section>
 
-      <div class="social-auth-links text-center mt-2 mb-3">
-        <a href="#" class="btn btn-block btn-primary">
-          <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
-        </a>
-        <a href="#" class="btn btn-block btn-danger">
-          <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-        </a>
-      </div>
-      <!-- /.social-auth-links -->
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-      <p class="mb-1">
-        <a href="forgot-password.html">I forgot my password</a>
-      </p>
-      <p class="mb-0">
-        <a href="register.html" class="text-center">Register a new membership</a>
-      </p>
-    </div>
-    <!-- /.card-body -->
-  </div>
-  <!-- /.card -->
-</div>
-<!-- /.login-box -->
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-<!-- jQuery -->
-<script src="adminLTE/plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="adminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- AdminLTE App -->
-<script src="adminLTE/dist/js/adminlte.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
 </body>
 </html>
