@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 23 Agu 2024 pada 05.56
+-- Waktu pembuatan: 29 Agu 2024 pada 13.29
 -- Versi server: 10.4.28-MariaDB
--- Versi PHP: 8.0.28
+-- Versi PHP: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -36,6 +36,25 @@ CREATE TABLE `barang` (
   `total_harga` varchar(1000) GENERATED ALWAYS AS (`harga_satuan` * `qty`) STORED,
   `deskripsi` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `events`
+--
+
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL,
+  `event_date` date NOT NULL,
+  `event_label` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `events`
+--
+
+INSERT INTO `events` (`id`, `event_date`, `event_label`) VALUES
+(2, '2024-08-01', 'yaa');
 
 -- --------------------------------------------------------
 
@@ -106,7 +125,28 @@ INSERT INTO `pelanggan` (`id`, `nama_pelanggan`, `no_wa`, `alamat`, `paket_wifi`
 (46, 'Pak Marjo', '085864317555', '-', '10Mbps', '2023-10-02', 'Aktif'),
 (47, 'Lilis / Dedi Kurniawan', '62-815-6405-463', 'Lebakngok', '10Mbps', '2023-12-06', 'Aktif'),
 (48, 'Kusnia', '62-878-2215-4100', 'Krutug', '10Mbps', '2024-01-21', 'Aktif'),
-(49, 'Mila', '62-896-2402-0600', 'Krutug', '5Mbps', '2023-03-15', 'Aktif');
+(49, 'Mila', '62-896-2402-0600', 'Krutug', '5Mbps', '2023-03-15', 'Aktif'),
+(50, '', '', '', '', '0000-00-00', 'Aktif'),
+(51, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(52, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(53, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(54, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(55, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(56, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(57, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(58, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(59, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(60, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(61, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(62, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(63, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(64, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(65, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(66, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(67, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(68, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(69, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
+(70, '', '', '', '', '0000-00-00', 'Tidak Aktif');
 
 -- --------------------------------------------------------
 
@@ -155,7 +195,8 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
 (1, 'admin', '0192023a7bbd73250516f069df18b500', 'admin'),
 (2, 'manajemen', '7839a6a91b6a99d4c29852a0beaa18c8', 'manajemen'),
-(3, 'teknisi', '968804b0281d865a7fc03a3cfb15933f', 'teknisi');
+(3, 'teknisi', '968804b0281d865a7fc03a3cfb15933f', 'teknisi'),
+(4, 'kevin', '1234', 'admin');
 
 --
 -- Indexes for dumped tables
@@ -165,6 +206,12 @@ INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
 -- Indeks untuk tabel `barang`
 --
 ALTER TABLE `barang`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `events`
+--
+ALTER TABLE `events`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -194,13 +241,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT untuk tabel `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT untuk tabel `events`
+--
+ALTER TABLE `events`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `pelanggan`
 --
 ALTER TABLE `pelanggan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT untuk tabel `pembayaran`
@@ -212,7 +265,7 @@ ALTER TABLE `pembayaran`
 -- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
