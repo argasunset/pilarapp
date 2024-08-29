@@ -93,7 +93,7 @@ $conn->close();
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
                 <a class="nav-link" href="index.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <i class="fa fa-home"></i>
                     <span>Dashboard</span></a>
             </li>
 

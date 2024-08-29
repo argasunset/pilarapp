@@ -68,23 +68,13 @@ $conn->close();
 
     <title>SB Admin 2 - Dashboard</title>
 
-<!-- CSS Bootstrap -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- jQuery dan JavaScript Bootstrap -->
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
+    <!-- CSS Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery dan JavaScript Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
-
-    <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 </head>
 
@@ -520,98 +510,7 @@ $conn->close();
     </div>
 </div>
 
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        $(document).ready(function() {
-            $('#paymentForm').on('submit', function(event) {
-                event.preventDefault();
-                var formData = new FormData(this);
-                $.ajax({
-                    url: 'savepembayaran.php',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Sukses',
-                            text: 'Data berhasil disimpan'
-                        }).then(function() {
-                            $('#inputPembayaranModal').modal('hide');
-                            // Reload data table if necessary, e.g.:
-                            // location.reload();
-                        });
-                    },
-                    error: function(response) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Terjadi kesalahan, coba lagi nanti'
-                        });
-                    }
-                });
-            });
-        });
-
-        function toggleStatus(id, currentStatus) {
-            $.ajax({
-                url: 'data_pelanggan.php',
-                type: 'POST',
-                data: {
-                    toggle_status: true,
-                    id: id,
-                    current_status: currentStatus
-                },
-                success: function(response) {
-                    var data = JSON.parse(response);
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Sukses',
-                            text: 'Status berhasil diubah'
-                        }).then(function() {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Terjadi kesalahan, coba lagi nanti'
-                        });
-                    }
-                }
-            });
-        }
-         // Search function
-    $('#search').on('keyup', function() {
-        var searchText = $(this).val().toLowerCase();
-        $('#pelangganTable tbody tr').each(function() {
-            var rowText = $(this).text().toLowerCase();
-            $(this).toggle(rowText.indexOf(searchText) > -1);
-        });
-    });
-
-    $(document).ready(function() {
-            $('#pelangganTable').DataTable({
-                "pageLength": 5, // Set number of rows per page
-                "lengthChange": false, // Disable option to change number of rows displayed
-                "language": {
-                    "paginate": {
-                        "previous": "Sebelumnya",
-                        "next": "Berikutnya"
-                    },
-                    "info": "Menampilkan halaman _PAGE_ dari _PAGES_"
-                }
-            });
-        });
-    </script>
+    
 
 
 </div>
@@ -657,7 +556,6 @@ $conn->close();
             </div>
         </div>
     </div>
-
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -674,6 +572,96 @@ $conn->close();
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            $('#paymentForm').on('submit', function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: 'savepembayaran.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sukses',
+                            text: 'Data berhasil disimpan'
+                        }).then(function() {
+                            $('#inputPembayaranModal').modal('hide');
+                            // Reload data table if necessary, e.g.:
+                            // location.reload();
+                        });
+                    },
+                    error: function(response) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terjadi kesalahan, coba lagi nanti'
+                        });
+                    }
+                });
+            });
+        });
+
+        function toggleStatus(id, currentStatus) {
+        $.ajax({
+            type: "POST",
+            url: "internet_home.php",  // Ganti dengan nama file PHP Anda
+            data: {
+                toggle_status: true,
+                id: id,
+                current_status: currentStatus
+            },
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    // Update status di tabel secara dinamis
+                    let button = $('#status-button-' + id);
+                    let newStatus = (currentStatus === 'Aktif') ? 'Tidak Aktif' : 'Aktif';
+                    button.text(newStatus);
+                    button.toggleClass('btn-success btn-danger');
+                    button.attr("onclick", "toggleStatus(" + id + ", '" + newStatus + "')");
+                } else {
+                    alert("Gagal mengubah status: " + response.error);
+                }
+            },
+            error: function() {
+                alert("Terjadi kesalahan saat mencoba mengubah status.");
+            }
+        });
+    }
+         // Search function
+    $('#search').on('keyup', function() {
+        var searchText = $(this).val().toLowerCase();
+        $('#pelangganTable tbody tr').each(function() {
+            var rowText = $(this).text().toLowerCase();
+            $(this).toggle(rowText.indexOf(searchText) > -1);
+        });
+    });
+
+    $(document).ready(function() {
+            $('#pelangganTable').DataTable({
+                "pageLength": 5, // Set number of rows per page
+                "lengthChange": false, // Disable option to change number of rows displayed
+                "language": {
+                    "paginate": {
+                        "previous": "Sebelumnya",
+                        "next": "Berikutnya"
+                    },
+                    "info": "Menampilkan halaman _PAGE_ dari _PAGES_"
+                }
+            });
+        });
+    </script>
+
 
 </body>
 
