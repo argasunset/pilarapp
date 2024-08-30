@@ -141,7 +141,7 @@ $conn->close();
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div class="sidebar-brand-icon">
-                    <i class="fa-solid fa-home" style="font-size: 25px;"></i>
+                    <i class="fa-solid fa-gem" style="font-size: 25px;"></i>
                 </div>
                 <div class="sidebar-brand-text mx-2">Pilar solusi</div>
             </a>
@@ -232,10 +232,9 @@ $conn->close();
             </li>
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span>
-                </a>
+                <a class="nav-link" href="kalender.php">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Kalender</span></a>
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

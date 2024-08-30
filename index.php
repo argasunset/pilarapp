@@ -72,6 +72,9 @@ $conn->close();
 </head>
 
 <body id="page-top">
+    <audio autoplay>
+        <source src="satubulan.mp3" type="audio/mp3"/>
+    </audio>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -82,7 +85,7 @@ $conn->close();
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div class="sidebar-brand-icon">
-                <i class="fa-solid fa-home" style="font-size: 25px;"></i>
+                <i class="fa-solid fa-gem" style="font-size: 25px;"></i>
                 </div>
                 <div class="sidebar-brand-text mx-2">Pilar solusi</div>
             </a>
