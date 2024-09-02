@@ -25,10 +25,36 @@ if ($result->num_rows > 0) {
     $jumlah_barang = 0; // Jika tidak ada data, set jumlah barang ke 0
 }
 
+// Query untuk menghitung total pemasukan dari kolom nominal_bayar di tabel pembayaran
+$query = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran";
+$result = $conn->query($query);
+
+if ($result->num_rows > 0) {
+    // Ambil hasil query
+    $row = $result->fetch_assoc();
+    $total_pemasukan = $row['total_pemasukan'];
+} else {
+    $total_pemasukan = 0; // Jika tidak ada data, set total pemasukan ke 0
+}
+
+// Query untuk menghitung total barang
+$query_barang = "SELECT COUNT(*) as total_barang FROM barang";
+$result_barang = $conn->query($query_barang);
+$jumlah_barang = ($result_barang->num_rows > 0) ? $result_barang->fetch_assoc()['total_barang'] : 0;
+
+// Query untuk menghitung total pemasukan dari tabel pembayaran
+$query_pemasukan = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran";
+$result_pemasukan = $conn->query($query_pemasukan);
+$total_pemasukan = ($result_pemasukan->num_rows > 0) ? $result_pemasukan->fetch_assoc()['total_pemasukan'] : 0;
+
+// Query untuk menghitung total pengeluaran dari tabel barang
+$query_pengeluaran = "SELECT SUM(total_harga) as total_pengeluaran FROM barang";
+$result_pengeluaran = $conn->query($query_pengeluaran);
+$total_pengeluaran = ($result_pengeluaran->num_rows > 0) ? $result_pengeluaran->fetch_assoc()['total_pengeluaran'] : 0;
+
 // Contoh nilai lain (social dan referral) untuk diagram pie
 $jumlah_social = 20;  // Misalnya nilai tetap atau dari query database lain
 $jumlah_referral = 30; // Misalnya nilai tetap atau dari query database lain
-
 
 $id = $_SESSION['id']; // Pastikan variabel sesi sesuai dengan kolom di database
 
@@ -42,6 +68,7 @@ $stmt->fetch();
 $stmt->close();
 $conn->close();
 ?>
+
 
 
 <!DOCTYPE html>
@@ -69,12 +96,20 @@ $conn->close();
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+    <!-- dark mode & light -->
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=New+Amsterdam&display=swap" rel="stylesheet">
+
 </head>
 
 <body id="page-top">
-    <audio autoplay>
+    
+
+    <!-- <audio autoplay>
         <source src="satubulan.mp3" type="audio/mp3"/>
-    </audio>
+    </audio> -->
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -263,6 +298,15 @@ $conn->close();
                             </div>
                         </li>
 
+                         <!-- Nav Item - Alerts -->
+                         <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa-solid fa-sun" id="icon"></i>
+                                <!-- Counter - Alerts -->
+                                <span class="badge badge-danger badge-counter">3+</span>
+                            </a>
+
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
@@ -395,8 +439,10 @@ $conn->close();
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Earnings (Annual)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                                Pemasukan Keuangan</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            Rp <?= number_format($total_pemasukan * 1000, 0, ',', '.'); ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -412,17 +458,14 @@ $conn->close();
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pengeluaran Keuangan
                                             </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            Rp <?= number_format($total_pemasukan * 1000, 0, ',', '.'); ?>
+                                            </div>
+                                            <div>              
+                                        <div class="col">
+                                            <div>
                                                     </div>
                                                 </div>
                                             </div>
