@@ -25,6 +25,17 @@ if ($result->num_rows > 0) {
     $jumlah_barang = 0; // Jika tidak ada data, set jumlah barang ke 0
 }
 
+$query = "SELECT COUNT(*) as total_pelanggan FROM pelanggan";
+$result = $conn->query($query);
+
+if ($result->num_rows > 0) {
+    // Ambil hasil
+    $row = $result->fetch_assoc();
+    $total_pelanggan = $row['total_pelanggan'];
+} else {
+    $total_pelanggan = 0; // Jika tidak ada data
+}
+
 // Query untuk menghitung total pemasukan dari kolom nominal_bayar di tabel pembayaran
 $query = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran";
 $result = $conn->query($query);
@@ -37,7 +48,6 @@ if ($result->num_rows > 0) {
     $total_pemasukan = 0; // Jika tidak ada data, set total pemasukan ke 0
 }
 
-// Query untuk menghitung total barang
 $query = "SELECT SUM(total_harga) as total_harga_semua FROM barang";
 $result = $conn->query($query);
 
@@ -48,9 +58,13 @@ if ($result->num_rows > 0) {
 } else {
     $total_harga_semua = 0; // Jika tidak ada data
 }
+
+
+
 // Contoh nilai lain (social dan referral) untuk diagram pie
 $jumlah_social = 20;  // Misalnya nilai tetap atau dari query database lain
 $jumlah_referral = 30; // Misalnya nilai tetap atau dari query database lain
+
 
 $id = $_SESSION['id']; // Pastikan variabel sesi sesuai dengan kolom di database
 
@@ -64,7 +78,6 @@ $stmt->fetch();
 $stmt->close();
 $conn->close();
 ?>
-
 
 
 <!DOCTYPE html>
@@ -92,21 +105,11 @@ $conn->close();
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-    <!-- dark mode & light -->
-    <link rel="stylesheet" href="css/app.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=New+Amsterdam&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styleoke.css">
 
 </head>
 
 <body id="page-top">
-    
-
-    <!-- <audio autoplay>
-        <source src="satubulan.mp3" type="audio/mp3"/>
-    </audio> -->
-
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -294,15 +297,6 @@ $conn->close();
                             </div>
                         </li>
 
-                         <!-- Nav Item - Alerts -->
-                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa-solid fa-sun" id="icon"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
-
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
@@ -355,6 +349,7 @@ $conn->close();
                         </li>
 
                         <!-- Nav Item - Messages -->
+                        <button class="theme"><i class="fa-solid fa-sun" id="icon"></i></button>
                        
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -429,6 +424,7 @@ $conn->close();
 </div>
 
                         <!-- Earnings (Monthly) Card Example -->
+                        <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
@@ -448,31 +444,27 @@ $conn->close();
                             </div>
                         </div>
 
+
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card border-left-warning shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pengeluaran Keuangan
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            Rp <?= number_format($total_pemasukan * 1000, 0, ',', '.'); ?>
-                                            </div>
-                                            <div>              
-                                        <div class="col">
-                                            <div>
-                                                    </div>
-                                                </div>
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Pengeluaran Keuangan</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php echo "Rp " . number_format($total_harga_semua * 1000, 0, ',', '.'); ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
+                                            <i class="fa fa-clipboard-list fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                        
 
                         <!-- Pending Requests Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
@@ -481,11 +473,13 @@ $conn->close();
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                                Total Pelanggan</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php echo $total_pelanggan; ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                            <i class="fa-solid fa-users fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
