@@ -13,6 +13,30 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
+// Default query tanpa filter
+$where_clause = "";
+
+// Cek apakah ada filter yang diterapkan
+if (isset($_POST['filterMonth']) && !empty($_POST['filterMonth'])) {
+    $filterMonth = $_POST['filterMonth'];
+    $where_clause .= " AND DATE_FORMAT(tanggal, '%Y-%m') = '$filterMonth'";
+}
+
+if (isset($_POST['filterDate']) && !empty($_POST['filterDate'])) {
+    $filterDate = $_POST['filterDate'];
+    $where_clause .= " AND DATE(tanggal) = '$filterDate'";
+}
+
+// Query untuk menghitung total pemasukan berdasarkan filter
+$query_pemasukan = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran WHERE 1=1 $where_clause";
+$result_pemasukan = $conn->query($query_pemasukan);
+$total_pemasukan = ($result_pemasukan->num_rows > 0) ? $result_pemasukan->fetch_assoc()['total_pemasukan'] : 0;
+
+// Query untuk menghitung total pengeluaran berdasarkan filter
+$query_pengeluaran = "SELECT SUM(total_harga) as total_pengeluaran FROM barang WHERE 1=1 $where_clause";
+$result_pengeluaran = $conn->query($query_pengeluaran);
+$total_pengeluaran = ($result_pengeluaran->num_rows > 0) ? $result_pengeluaran->fetch_assoc()['total_pengeluaran'] : 0;
+
 // Query untuk menghitung jumlah barang
 $query = "SELECT COUNT(*) as total_barang FROM barang";
 $result = $conn->query($query);
@@ -23,6 +47,17 @@ if ($result->num_rows > 0) {
     $jumlah_barang = $row['total_barang'];
 } else {
     $jumlah_barang = 0; // Jika tidak ada data, set jumlah barang ke 0
+}
+
+$query = "SELECT COUNT(*) as total_pelanggan FROM pelanggan";
+$result = $conn->query($query);
+
+if ($result->num_rows > 0) {
+    // Ambil hasil
+    $row = $result->fetch_assoc();
+    $total_pelanggan = $row['total_pelanggan'];
+} else {
+    $total_pelanggan = 0; // Jika tidak ada data
 }
 
 // Query untuk menghitung total pemasukan dari kolom nominal_bayar di tabel pembayaran
@@ -37,24 +72,23 @@ if ($result->num_rows > 0) {
     $total_pemasukan = 0; // Jika tidak ada data, set total pemasukan ke 0
 }
 
-// Query untuk menghitung total barang
-$query_barang = "SELECT COUNT(*) as total_barang FROM barang";
-$result_barang = $conn->query($query_barang);
-$jumlah_barang = ($result_barang->num_rows > 0) ? $result_barang->fetch_assoc()['total_barang'] : 0;
+$query = "SELECT SUM(total_harga) as total_harga_semua FROM barang";
+$result = $conn->query($query);
 
-// Query untuk menghitung total pemasukan dari tabel pembayaran
-$query_pemasukan = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran";
-$result_pemasukan = $conn->query($query_pemasukan);
-$total_pemasukan = ($result_pemasukan->num_rows > 0) ? $result_pemasukan->fetch_assoc()['total_pemasukan'] : 0;
+if ($result->num_rows > 0) {
+    // Ambil hasil
+    $row = $result->fetch_assoc();
+    $total_harga_semua = $row['total_harga_semua'];
+} else {
+    $total_harga_semua = 0; // Jika tidak ada data
+}
 
-// Query untuk menghitung total pengeluaran dari tabel barang
-$query_pengeluaran = "SELECT SUM(total_harga) as total_pengeluaran FROM barang";
-$result_pengeluaran = $conn->query($query_pengeluaran);
-$total_pengeluaran = ($result_pengeluaran->num_rows > 0) ? $result_pengeluaran->fetch_assoc()['total_pengeluaran'] : 0;
+
 
 // Contoh nilai lain (social dan referral) untuk diagram pie
 $jumlah_social = 20;  // Misalnya nilai tetap atau dari query database lain
 $jumlah_referral = 30; // Misalnya nilai tetap atau dari query database lain
+
 
 $id = $_SESSION['id']; // Pastikan variabel sesi sesuai dengan kolom di database
 
@@ -68,7 +102,6 @@ $stmt->fetch();
 $stmt->close();
 $conn->close();
 ?>
-
 
 
 <!DOCTYPE html>
@@ -97,14 +130,12 @@ $conn->close();
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
     <!-- dark mode & light -->
-    <link rel="stylesheet" href="css/app.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=New+Amsterdam&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="js/script.js"></script>
 
 </head>
 
-<body id="page-top">
+<body id="page-top" >
     
 
     <!-- <audio autoplay>
@@ -301,11 +332,10 @@ $conn->close();
                          <!-- Nav Item - Alerts -->
                          <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa-solid fa-sun" id="icon"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            onclick="toggleMode()">
+                            <i class="fa-solid fa-sun" id="icon"></i>
+                        </a>
 
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
@@ -402,12 +432,52 @@ $conn->close();
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                    </div>
+                   <!-- Page Heading -->
+                   <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    <div>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+        <!-- Tombol Filter -->
+        <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#filterModal">
+            Filter
+        </button>
+    </div>
+</div>
+
+
+<!-- Modal untuk Filter -->
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filter Pemasukan dan Pengeluaran</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <form id="filterForm" method="POST" action="">
+    <div class="form-group">
+        <label for="filterMonth">Pilih Bulan:</label>
+        <input type="month" id="filterMonth" name="filterMonth" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="filterDate">Pilih Tanggal:</label>
+        <input type="date" id="filterDate" name="filterDate" class="form-control">
+    </div>
+</form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="applyFilter()">Apply Filter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    
 
                     <!-- Content Row -->
                     <div class="row">
@@ -461,7 +531,7 @@ $conn->close();
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pengeluaran Keuangan
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            Rp <?= number_format($total_pemasukan * 1000, 0, ',', '.'); ?>
+                                            Rp <?= number_format($total_harga_semua , 0, ',', '.'); ?>
                                             </div>
                                             <div>              
                                         <div class="col">
@@ -484,12 +554,14 @@ $conn->close();
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Total Pelanggan</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php echo $total_pelanggan; ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                        <i class="fa-solid fa-users fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -764,6 +836,9 @@ $conn->close();
         </div>
     </div>
 
+    <!-- Script for Dark Mode -->   
+    <script src="js/script.js"></script>
+
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -781,7 +856,9 @@ $conn->close();
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
     <script src="vendor/chart.js/Chart.min.js"></script>
-<script>
+
+    
+    <script>
     // Set new default font family and font color to mimic Bootstrap's default styling
     Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
     Chart.defaults.global.defaultFontColor = '#858796';
@@ -821,6 +898,31 @@ $conn->close();
             cutoutPercentage: 80,
         },
     });
+
+    function applyFilter() {
+  var month = document.getElementById('filterMonth').value;
+  var date = document.getElementById('filterDate').value;
+
+  // Lakukan permintaan AJAX ke server dengan data filter
+  $.ajax({
+    url: 'filter_data.php',
+    method: 'POST',
+    data: {
+      filterMonth: month,
+      filterDate: date
+    },
+    success: function(response) {
+      // Update dashboard dengan data yang difilter
+      $('#dashboardContent').html(response);
+      $('#filterModal').modal('hide');
+    }
+  });
+}
+
+function applyFilter() {
+    document.getElementById("filterForm").submit();
+    location.reload();
+}
 </script>
 
 
