@@ -13,29 +13,69 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-// Default query tanpa filter
-$where_clause = "";
+// Cek apakah filter bulan diterapkan
+if (isset($_POST['bulan']) && !empty($_POST['bulan'])) {
+    $bulan = $_POST['bulan'];
+    // Format bulan untuk SQL
+    $bulan_awal = $bulan . "-01";
+    $bulan_akhir = date("Y-m-t", strtotime($bulan_awal)); // Ambil akhir bulan
 
-// Cek apakah ada filter yang diterapkan
-if (isset($_POST['filterMonth']) && !empty($_POST['filterMonth'])) {
-    $filterMonth = $_POST['filterMonth'];
-    $where_clause .= " AND DATE_FORMAT(tanggal, '%Y-%m') = '$filterMonth'";
+    // Query untuk menghitung total pemasukan berdasarkan bulan yang dipilih
+    $query = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran WHERE tanggal_pembayaran BETWEEN ? AND ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ss", $bulan_awal, $bulan_akhir);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Ambil hasil query
+        $row = $result->fetch_assoc();
+        $total_pemasukan = $row['total_pemasukan'];
+    } else {
+        $total_pemasukan = 0; // Jika tidak ada data, set total pemasukan ke 0
+    }
+
+    // Query untuk menghitung total pengeluaran berdasarkan bulan yang dipilih
+    $query = "SELECT SUM(total_harga) as total_harga_semua FROM barang WHERE tanggal BETWEEN ? AND ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ss", $bulan_awal, $bulan_akhir);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Ambil hasil query
+        $row = $result->fetch_assoc();
+        $total_harga_semua = $row['total_harga_semua'];
+    } else {
+        $total_harga_semua = 0; // Jika tidak ada data, set total pengeluaran ke 0
+    }
+
+} else {
+    // Jika filter tidak diterapkan, gunakan query default untuk seluruh data
+    // Query untuk menghitung total pemasukan dari kolom nominal_bayar di tabel pembayaran
+    $query = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran";
+    $result = $conn->query($query);
+
+    if ($result->num_rows > 0) {
+        // Ambil hasil query
+        $row = $result->fetch_assoc();
+        $total_pemasukan = $row['total_pemasukan'];
+    } else {
+        $total_pemasukan = 0; // Jika tidak ada data, set total pemasukan ke 0
+    }
+
+    // Query untuk menghitung total pengeluaran dari kolom total_harga di tabel barang
+    $query = "SELECT SUM(total_harga) as total_harga_semua FROM barang";
+    $result = $conn->query($query);
+
+    if ($result->num_rows > 0) {
+        // Ambil hasil query
+        $row = $result->fetch_assoc();
+        $total_harga_semua = $row['total_harga_semua'];
+    } else {
+        $total_harga_semua = 0; // Jika tidak ada data, set total pengeluaran ke 0
+    }
 }
-
-if (isset($_POST['filterDate']) && !empty($_POST['filterDate'])) {
-    $filterDate = $_POST['filterDate'];
-    $where_clause .= " AND DATE(tanggal) = '$filterDate'";
-}
-
-// Query untuk menghitung total pemasukan berdasarkan filter
-$query_pemasukan = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran WHERE 1=1 $where_clause";
-$result_pemasukan = $conn->query($query_pemasukan);
-$total_pemasukan = ($result_pemasukan->num_rows > 0) ? $result_pemasukan->fetch_assoc()['total_pemasukan'] : 0;
-
-// Query untuk menghitung total pengeluaran berdasarkan filter
-$query_pengeluaran = "SELECT SUM(total_harga) as total_pengeluaran FROM barang WHERE 1=1 $where_clause";
-$result_pengeluaran = $conn->query($query_pengeluaran);
-$total_pengeluaran = ($result_pengeluaran->num_rows > 0) ? $result_pengeluaran->fetch_assoc()['total_pengeluaran'] : 0;
 
 // Query untuk menghitung jumlah barang
 $query = "SELECT COUNT(*) as total_barang FROM barang";
@@ -49,6 +89,7 @@ if ($result->num_rows > 0) {
     $jumlah_barang = 0; // Jika tidak ada data, set jumlah barang ke 0
 }
 
+// Query untuk menghitung total pelanggan
 $query = "SELECT COUNT(*) as total_pelanggan FROM pelanggan";
 $result = $conn->query($query);
 
@@ -57,38 +98,12 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $total_pelanggan = $row['total_pelanggan'];
 } else {
-    $total_pelanggan = 0; // Jika tidak ada data
+    $total_pelanggan = 0; // Jika tidak ada data, set total pelanggan ke 0
 }
-
-// Query untuk menghitung total pemasukan dari kolom nominal_bayar di tabel pembayaran
-$query = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran";
-$result = $conn->query($query);
-
-if ($result->num_rows > 0) {
-    // Ambil hasil query
-    $row = $result->fetch_assoc();
-    $total_pemasukan = $row['total_pemasukan'];
-} else {
-    $total_pemasukan = 0; // Jika tidak ada data, set total pemasukan ke 0
-}
-
-$query = "SELECT SUM(total_harga) as total_harga_semua FROM barang";
-$result = $conn->query($query);
-
-if ($result->num_rows > 0) {
-    // Ambil hasil
-    $row = $result->fetch_assoc();
-    $total_harga_semua = $row['total_harga_semua'];
-} else {
-    $total_harga_semua = 0; // Jika tidak ada data
-}
-
-
 
 // Contoh nilai lain (social dan referral) untuk diagram pie
-$jumlah_social = 20;  // Misalnya nilai tetap atau dari query database lain
+// Misalnya nilai tetap atau dari query database lain
 $jumlah_referral = 30; // Misalnya nilai tetap atau dari query database lain
-
 
 $id = $_SESSION['id']; // Pastikan variabel sesi sesuai dengan kolom di database
 
@@ -100,6 +115,7 @@ $stmt->execute();
 $stmt->bind_result($username);
 $stmt->fetch();
 $stmt->close();
+
 $conn->close();
 ?>
 
@@ -113,7 +129,7 @@ $conn->close();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content=""> 
 
     <title>SB Admin 2 - Dashboard</title>
 
@@ -129,27 +145,11 @@ $conn->close();
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-<<<<<<< HEAD
-    <!-- dark mode & light -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<script src="js/script.js"></script>
-
-</head>
-
-<body id="page-top" >
-    
-
-    <!-- <audio autoplay>
-        <source src="satubulan.mp3" type="audio/mp3"/>
-    </audio> -->
-
-=======
     <link rel="stylesheet" href="css/styleoke.css">
 
 </head>
 
 <body id="page-top">
->>>>>>> 6152738a8173249fb15b23e1c42ee755c3bd4a8a
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -337,17 +337,6 @@ $conn->close();
                             </div>
                         </li>
 
-<<<<<<< HEAD
-                         <!-- Nav Item - Alerts -->
-                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                            onclick="toggleMode()">
-                            <i class="fa-solid fa-sun" id="icon"></i>
-                        </a>
-
-=======
->>>>>>> 6152738a8173249fb15b23e1c42ee755c3bd4a8a
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
@@ -444,9 +433,10 @@ $conn->close();
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                   <!-- Page Heading -->
-                   <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                     <!-- Page Heading -->
+                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    <marquee>Kevin Ngentot</marquee>
     <div>
         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
@@ -457,7 +447,6 @@ $conn->close();
     </div>
 </div>
 
-
 <!-- Modal untuk Filter -->
 <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -465,21 +454,48 @@ $conn->close();
             <div class="modal-header">
                 <h5 class="modal-title" id="filterModalLabel">Filter Pemasukan dan Pengeluaran</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span class="close">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
             <form id="filterForm" method="POST" action="">
-    <div class="form-group">
-        <label for="filterMonth">Pilih Bulan:</label>
-        <input type="month" id="filterMonth" name="filterMonth" class="form-control">
-    </div>
-    <div class="form-group">
-        <label for="filterDate">Pilih Tanggal:</label>
-        <input type="date" id="filterDate" name="filterDate" class="form-control">
-    </div>
-</form>
+            <div class="form-group">
+            <!-- Contoh HTML untuk modal -->
+<div id="filterModal">
+    <label for="bulan">Pilih Bulan:</label>
+    <input type="month" id="bulan" name="bulan">
+    <button id="applyFilter">Apply Filter</button>
+</div>
 
+<!-- Contoh JavaScript untuk menangani klik -->
+<script>
+    document.getElementById('applyFilter').addEventListener('click', function() {
+        var selectedMonth = document.getElementById('bulan').value;
+        
+        if (selectedMonth) {
+            // Lakukan sesuatu dengan nilai yang dipilih, misalnya panggil fungsi untuk memfilter data
+            console.log('Filter applied for month: ' + selectedMonth);
+
+            // Contoh: Mengirim nilai ke server menggunakan AJAX
+            /*
+            $.ajax({
+                url: 'your-server-endpoint.php',
+                method: 'POST',
+                data: { bulan: selectedMonth },
+                success: function(response) {
+                    // Tampilkan data yang difilter di halaman
+                    console.log(response);
+                }
+            });
+            */
+        } else {
+            alert('Silakan pilih bulan terlebih dahulu.');
+        }
+    });
+</script>
+
+        </div>
+    </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -488,8 +504,40 @@ $conn->close();
         </div>
     </div>
 </div>
+<script>
+    function applyFilter() {
+        // Ambil nilai dari input bulan (misalnya menggunakan id atau name dari input)
+        var selectedMonth = document.getElementById("monthInput").value;
 
-                    
+        // Lakukan validasi atau proses data sesuai kebutuhan
+        if (selectedMonth) {
+            // Misalnya, lakukan request ke server menggunakan AJAX atau submit form
+            alert("Filter diterapkan untuk bulan: " + selectedMonth);
+
+            // Jika ingin mengirim data ke server tanpa reload halaman
+            // Anda dapat menggunakan AJAX atau fetch API
+
+            // Contoh AJAX sederhana
+            // var xhr = new XMLHttpRequest();
+            // xhr.open("POST", "filter.php", true);
+            // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            // xhr.onreadystatechange = function () {
+            //     if (xhr.readyState == 4 && xhr.status == 200) {
+            //         // Tanggapan dari server bisa ditampilkan atau digunakan di sini
+            //         console.log(xhr.responseText);
+            //     }
+            // };
+            // xhr.send("month=" + selectedMonth);
+
+            // Atau bisa submit form jika ada form di dalam modal
+            // document.getElementById("filterForm").submit();
+        } else {
+            alert("Pilih bulan terlebih dahulu.");
+        }
+    }
+</script>
+
+
 
                     <!-- Content Row -->
                     <div class="row">
@@ -524,11 +572,11 @@ $conn->close();
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Pemasukan Keuangan</div>
                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            Rp <?= number_format($total_pemasukan * 1000, 0, ',', '.'); ?>
+                                                Rp <?= number_format($total_pemasukan * 1000, 0, ',', '.'); ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -538,31 +586,18 @@ $conn->close();
 
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card border-left-danger shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-<<<<<<< HEAD
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pengeluaran Keuangan
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            Rp <?= number_format($total_harga_semua , 0, ',', '.'); ?>
-                                            </div>
-                                            <div>              
-                                        <div class="col">
-                                            <div>
-                                                    </div>
-                                                </div>
-=======
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                                                 Pengeluaran Keuangan</div>
                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php echo "Rp " . number_format($total_harga_semua * 1000, 0, ',', '.'); ?>
->>>>>>> 6152738a8173249fb15b23e1c42ee755c3bd4a8a
+                                                <?php echo "Rp " . number_format($total_harga_semua , 0, ',', '.'); ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fa fa-clipboard-list fa-2x text-gray-300"></i>
+                                            <i class="fas fa-arrow-down fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -576,22 +611,14 @@ $conn->close();
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-<<<<<<< HEAD
-                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-=======
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
->>>>>>> 6152738a8173249fb15b23e1c42ee755c3bd4a8a
                                                 Total Pelanggan</div>
                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php echo $total_pelanggan; ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
-<<<<<<< HEAD
-                                        <i class="fa-solid fa-users fa-2x text-gray-300"></i>
-=======
                                             <i class="fa-solid fa-users fa-2x text-gray-300"></i>
->>>>>>> 6152738a8173249fb15b23e1c42ee755c3bd4a8a
                                         </div>
                                     </div>
                                 </div>
@@ -866,9 +893,6 @@ $conn->close();
         </div>
     </div>
 
-    <!-- Script for Dark Mode -->   
-    <script src="js/script.js"></script>
-
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -887,8 +911,7 @@ $conn->close();
     <script src="js/demo/chart-pie-demo.js"></script>
     <script src="vendor/chart.js/Chart.min.js"></script>
 
-    
-    <script>
+<script>
     // Set new default font family and font color to mimic Bootstrap's default styling
     Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
     Chart.defaults.global.defaultFontColor = '#858796';
@@ -898,15 +921,16 @@ $conn->close();
     var myPieChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ["Jumlah Barang", "Social", "Referral"],
+            labels: ["Jumlah Barang", "Jumlah Pelanggan", "Total Pemasukan", "Total Pengeluaran"],
             datasets: [{
-                data: [
+                data: [ 
                     <?php echo $jumlah_barang; ?>, 
-                    <?php echo $jumlah_social; ?>, 
-                    <?php echo $jumlah_referral; ?>
+                    <?php echo $total_pelanggan; ?>, 
+                    <?php echo $total_pemasukan; ?>, 
+                    <?php echo $total_harga_semua; ?>
                 ],
-                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                backgroundColor: ['#4e73df', '#f6c23e', '#1cc88a', '#e74a3b'],
+                hoverBackgroundColor: ['#2e59d9', '#f4b619', '#17a673', '#e02d3a'],
                 hoverBorderColor: "rgba(234, 236, 244, 1)",
             }],
         },
@@ -928,32 +952,9 @@ $conn->close();
             cutoutPercentage: 80,
         },
     });
-
-    function applyFilter() {
-  var month = document.getElementById('filterMonth').value;
-  var date = document.getElementById('filterDate').value;
-
-  // Lakukan permintaan AJAX ke server dengan data filter
-  $.ajax({
-    url: 'filter_data.php',
-    method: 'POST',
-    data: {
-      filterMonth: month,
-      filterDate: date
-    },
-    success: function(response) {
-      // Update dashboard dengan data yang difilter
-      $('#dashboardContent').html(response);
-      $('#filterModal').modal('hide');
-    }
-  });
-}
-
-function applyFilter() {
-    document.getElementById("filterForm").submit();
-    location.reload();
-}
+    
 </script>
+
 
 
 </body>
