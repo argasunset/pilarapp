@@ -129,6 +129,7 @@ $conn->close();
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+<<<<<<< HEAD
     <!-- dark mode & light -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <script src="js/script.js"></script>
@@ -142,6 +143,13 @@ $conn->close();
         <source src="satubulan.mp3" type="audio/mp3"/>
     </audio> -->
 
+=======
+    <link rel="stylesheet" href="css/styleoke.css">
+
+</head>
+
+<body id="page-top">
+>>>>>>> 6152738a8173249fb15b23e1c42ee755c3bd4a8a
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -329,6 +337,7 @@ $conn->close();
                             </div>
                         </li>
 
+<<<<<<< HEAD
                          <!-- Nav Item - Alerts -->
                          <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
@@ -337,6 +346,8 @@ $conn->close();
                             <i class="fa-solid fa-sun" id="icon"></i>
                         </a>
 
+=======
+>>>>>>> 6152738a8173249fb15b23e1c42ee755c3bd4a8a
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
@@ -389,6 +400,7 @@ $conn->close();
                         </li>
 
                         <!-- Nav Item - Messages -->
+                        <button class="theme"><i class="fa-solid fa-sun" id="icon"></i></button>
                        
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -503,6 +515,7 @@ $conn->close();
 </div>
 
                         <!-- Earnings (Monthly) Card Example -->
+                        <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
@@ -522,12 +535,14 @@ $conn->close();
                             </div>
                         </div>
 
+
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card border-left-warning shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
+<<<<<<< HEAD
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pengeluaran Keuangan
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
@@ -538,15 +553,22 @@ $conn->close();
                                             <div>
                                                     </div>
                                                 </div>
+=======
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Pengeluaran Keuangan</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php echo "Rp " . number_format($total_harga_semua * 1000, 0, ',', '.'); ?>
+>>>>>>> 6152738a8173249fb15b23e1c42ee755c3bd4a8a
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
+                                            <i class="fa fa-clipboard-list fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                        
 
                         <!-- Pending Requests Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
@@ -554,14 +576,22 @@ $conn->close();
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
+<<<<<<< HEAD
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+=======
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+>>>>>>> 6152738a8173249fb15b23e1c42ee755c3bd4a8a
                                                 Total Pelanggan</div>
                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php echo $total_pelanggan; ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
+<<<<<<< HEAD
                                         <i class="fa-solid fa-users fa-2x text-gray-300"></i>
+=======
+                                            <i class="fa-solid fa-users fa-2x text-gray-300"></i>
+>>>>>>> 6152738a8173249fb15b23e1c42ee755c3bd4a8a
                                         </div>
                                     </div>
                                 </div>
