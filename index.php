@@ -539,7 +539,7 @@ $conn->close();
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Pemasukan Keuangan</div>
                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                Rp <?= number_format($total_pemasukan , 0, ',', '.'); ?>
+                                                Rp <?= number_format($total_pemasukan * 1000, 0, ',', '.'); ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
