@@ -436,7 +436,6 @@ $conn->close();
                      <!-- Page Heading -->
                      <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-    <marquee>Kevin Ngentot</marquee>
     <div>
         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
@@ -458,44 +457,12 @@ $conn->close();
                 </button>
             </div>
             <div class="modal-body">
-            <form id="filterForm" method="POST" action="">
-            <div class="form-group">
-            <!-- Contoh HTML untuk modal -->
-<div id="filterModal">
-    <label for="bulan">Pilih Bulan:</label>
-    <input type="month" id="bulan" name="bulan">
-    <button id="applyFilter">Apply Filter</button>
-</div>
-
-<!-- Contoh JavaScript untuk menangani klik -->
-<script>
-    document.getElementById('applyFilter').addEventListener('click', function() {
-        var selectedMonth = document.getElementById('bulan').value;
-        
-        if (selectedMonth) {
-            // Lakukan sesuatu dengan nilai yang dipilih, misalnya panggil fungsi untuk memfilter data
-            console.log('Filter applied for month: ' + selectedMonth);
-
-            // Contoh: Mengirim nilai ke server menggunakan AJAX
-            /*
-            $.ajax({
-                url: 'your-server-endpoint.php',
-                method: 'POST',
-                data: { bulan: selectedMonth },
-                success: function(response) {
-                    // Tampilkan data yang difilter di halaman
-                    console.log(response);
-                }
-            });
-            */
-        } else {
-            alert('Silakan pilih bulan terlebih dahulu.');
-        }
-    });
-</script>
-
-        </div>
-    </form>
+                <form id="filterForm" method="POST" action="">
+                    <div class="form-group">
+                        <label for="bulan">Pilih Bulan:</label>
+                        <input type="month" id="bulan" name="bulan" class="form-control">
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -504,38 +471,38 @@ $conn->close();
         </div>
     </div>
 </div>
+
 <script>
     function applyFilter() {
-        // Ambil nilai dari input bulan (misalnya menggunakan id atau name dari input)
-        var selectedMonth = document.getElementById("monthInput").value;
+        // Ambil nilai dari input bulan
+        var selectedMonth = document.getElementById("bulan").value;
 
-        // Lakukan validasi atau proses data sesuai kebutuhan
         if (selectedMonth) {
-            // Misalnya, lakukan request ke server menggunakan AJAX atau submit form
-            alert("Filter diterapkan untuk bulan: " + selectedMonth);
+            // Contoh: Mengirim nilai ke server menggunakan AJAX
+            console.log('Filter applied for month: ' + selectedMonth);
 
-            // Jika ingin mengirim data ke server tanpa reload halaman
-            // Anda dapat menggunakan AJAX atau fetch API
-
-            // Contoh AJAX sederhana
-            // var xhr = new XMLHttpRequest();
-            // xhr.open("POST", "filter.php", true);
-            // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            // xhr.onreadystatechange = function () {
-            //     if (xhr.readyState == 4 && xhr.status == 200) {
-            //         // Tanggapan dari server bisa ditampilkan atau digunakan di sini
-            //         console.log(xhr.responseText);
-            //     }
-            // };
-            // xhr.send("month=" + selectedMonth);
+            // Contoh AJAX sederhana untuk mengirim data ke server tanpa reload halaman
+            /*
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "your-server-endpoint.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Tanggapan dari server bisa ditampilkan atau digunakan di sini
+                    console.log(xhr.responseText);
+                }
+            };
+            xhr.send("bulan=" + selectedMonth);
+            */
 
             // Atau bisa submit form jika ada form di dalam modal
-            // document.getElementById("filterForm").submit();
+            document.getElementById("filterForm").submit();
         } else {
-            alert("Pilih bulan terlebih dahulu.");
+            alert("Silakan pilih bulan terlebih dahulu.");
         }
     }
 </script>
+
 
 
 
@@ -572,7 +539,7 @@ $conn->close();
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Pemasukan Keuangan</div>
                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                Rp <?= number_format($total_pemasukan * 1000, 0, ',', '.'); ?>
+                                                Rp <?= number_format($total_pemasukan , 0, ',', '.'); ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">

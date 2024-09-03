@@ -1,6 +1,13 @@
 <?php
 session_start();
 
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['id']) || !isset($_SESSION['role'])) {
+    // Jika belum login, arahkan ke halaman login
+    header("Location: login.php");
+    exit;
+}
+
 // Koneksi ke database
 $conn = new mysqli("localhost", "root", "", "pilarapp");
 if ($conn->connect_error) {
