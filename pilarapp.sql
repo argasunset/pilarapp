@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 29 Agu 2024 pada 13.29
+-- Waktu pembuatan: 04 Sep 2024 pada 05.41
 -- Versi server: 10.4.28-MariaDB
--- Versi PHP: 8.2.4
+-- Versi PHP: 8.0.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -37,6 +37,13 @@ CREATE TABLE `barang` (
   `deskripsi` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `barang`
+--
+
+INSERT INTO `barang` (`id`, `tanggal`, `nama_barang`, `harga_satuan`, `qty`, `deskripsi`) VALUES
+(2, '2024-09-01', 'Jenset', '12000', 2, 'ya');
+
 -- --------------------------------------------------------
 
 --
@@ -48,13 +55,6 @@ CREATE TABLE `events` (
   `event_date` date NOT NULL,
   `event_label` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `events`
---
-
-INSERT INTO `events` (`id`, `event_date`, `event_label`) VALUES
-(2, '2024-08-01', 'yaa');
 
 -- --------------------------------------------------------
 
@@ -125,28 +125,7 @@ INSERT INTO `pelanggan` (`id`, `nama_pelanggan`, `no_wa`, `alamat`, `paket_wifi`
 (46, 'Pak Marjo', '085864317555', '-', '10Mbps', '2023-10-02', 'Aktif'),
 (47, 'Lilis / Dedi Kurniawan', '62-815-6405-463', 'Lebakngok', '10Mbps', '2023-12-06', 'Aktif'),
 (48, 'Kusnia', '62-878-2215-4100', 'Krutug', '10Mbps', '2024-01-21', 'Aktif'),
-(49, 'Mila', '62-896-2402-0600', 'Krutug', '5Mbps', '2023-03-15', 'Aktif'),
-(50, '', '', '', '', '0000-00-00', 'Aktif'),
-(51, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(52, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(53, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(54, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(55, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(56, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(57, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(58, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(59, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(60, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(61, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(62, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(63, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(64, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(65, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(66, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(67, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(68, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(69, '', '', '', '', '0000-00-00', 'Tidak Aktif'),
-(70, '', '', '', '', '0000-00-00', 'Tidak Aktif');
+(49, 'Mila', '62-896-2402-0600', 'Krutug', '5Mbps', '2023-03-15', 'Aktif');
 
 -- --------------------------------------------------------
 
@@ -172,8 +151,8 @@ CREATE TABLE `pembayaran` (
 
 INSERT INTO `pembayaran` (`id`, `pelanggan_id`, `nominal_bayar`, `kurang_bayar`, `bukti_transfer`, `terbilang`, `untuk_pembayaran`, `tanggal_pembayaran`, `bukti_tf`) VALUES
 (4, 3, '120.00', '80.00', NULL, 'SERATUS DUA PULUH RIBU', 'Wifi', '2024-08-01 00:00:00', 'Kwitansi.png'),
-(5, 1, '120.000', '80.000', NULL, 'SERATUS DUA PULUH RIBU', 'Wifi', '2024-08-01', 'Kwitansi.png'),
-(6, 2, '120.000', '80.000', NULL, 'SERATUS DUA PULUH RIBU', 'Wifi', '2024-08-21', 'Kwitansi.png');
+(6, 2, '120.000', '80.000', NULL, 'SERATUS DUA PULUH RIBU', 'Wifi', '2024-08-21', 'Kwitansi.png'),
+(7, 1, '300.000', '20.000', NULL, 'TIGA RATUS RIBU', 'Susu', '2024-09-02', 'Kwitansi.png');
 
 -- --------------------------------------------------------
 
@@ -241,7 +220,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT untuk tabel `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `events`
@@ -259,7 +238,7 @@ ALTER TABLE `pelanggan`
 -- AUTO_INCREMENT untuk tabel `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT untuk tabel `user`
