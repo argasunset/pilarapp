@@ -1,3 +1,4 @@
+<script>
 // Set new default font family and font color to mimic Bootstrap's default styling
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
@@ -15,10 +16,9 @@ function number_format(number, decimals, dec_point, thousands_sep) {
       var k = Math.pow(10, prec);
       return '' + Math.round(n * k) / k;
     };
-  // Fix for IE parseFloat(0.55).toFixed(0) = 0;
   s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
   if (s[0].length > 3) {
-    s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+    s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, sep);
   }
   if ((s[1] || '').length < prec) {
     s[1] = s[1] || '';
@@ -78,7 +78,7 @@ var myLineChart = new Chart(ctx, {
           padding: 10,
           // Include a dollar sign in the ticks
           callback: function(value, index, values) {
-            return '$' + number_format(value);
+            return 'Rp ' + number_format(value);
           }
         },
         gridLines: {
@@ -96,8 +96,8 @@ var myLineChart = new Chart(ctx, {
     tooltips: {
       backgroundColor: "rgb(255,255,255)",
       bodyFontColor: "#858796",
-      titleMarginBottom: 10,
       titleFontColor: '#6e707e',
+      titleMarginBottom: 10,
       titleFontSize: 14,
       borderColor: '#dddfeb',
       borderWidth: 1,
@@ -110,9 +110,10 @@ var myLineChart = new Chart(ctx, {
       callbacks: {
         label: function(tooltipItem, chart) {
           var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-          return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+          return datasetLabel + ': Rp ' + number_format(tooltipItem.yLabel);
         }
       }
     }
   }
 });
+</script>

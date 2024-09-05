@@ -1,3 +1,126 @@
+<?php
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['id']) || !isset($_SESSION['role'])) {
+    // Jika belum login, arahkan ke halaman login
+    header("Location: login.php");
+    exit;
+}
+
+$conn = new mysqli("localhost", "root", "", "pilarapp");
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
+}
+
+// Cek apakah filter bulan diterapkan
+if (isset($_POST['bulan']) && !empty($_POST['bulan'])) {
+    $bulan = $_POST['bulan'];
+    // Format bulan untuk SQL
+    $bulan_awal = $bulan . "-01";
+    $bulan_akhir = date("Y-m-t", strtotime($bulan_awal)); // Ambil akhir bulan
+
+    // Query untuk menghitung total pemasukan berdasarkan bulan yang dipilih
+    $query = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran WHERE tanggal_pembayaran BETWEEN ? AND ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ss", $bulan_awal, $bulan_akhir);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Ambil hasil query
+        $row = $result->fetch_assoc();
+        $total_pemasukan = $row['total_pemasukan'];
+    } else {
+        $total_pemasukan = 0; // Jika tidak ada data, set total pemasukan ke 0
+    }
+
+    // Query untuk menghitung total pengeluaran berdasarkan bulan yang dipilih
+    $query = "SELECT SUM(total_harga) as total_harga_semua FROM barang WHERE tanggal BETWEEN ? AND ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ss", $bulan_awal, $bulan_akhir);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Ambil hasil query
+        $row = $result->fetch_assoc();
+        $total_harga_semua = $row['total_harga_semua'];
+    } else {
+        $total_harga_semua = 0; // Jika tidak ada data, set total pengeluaran ke 0
+    }
+
+} else {
+    // Jika filter tidak diterapkan, gunakan query default untuk seluruh data
+    // Query untuk menghitung total pemasukan dari kolom nominal_bayar di tabel pembayaran
+    $query = "SELECT SUM(nominal_bayar) as total_pemasukan FROM pembayaran";
+    $result = $conn->query($query);
+
+    if ($result->num_rows > 0) {
+        // Ambil hasil query
+        $row = $result->fetch_assoc();
+        $total_pemasukan = $row['total_pemasukan'];
+    } else {
+        $total_pemasukan = 0; // Jika tidak ada data, set total pemasukan ke 0
+    }
+
+    // Query untuk menghitung total pengeluaran dari kolom total_harga di tabel barang
+    $query = "SELECT SUM(total_harga) as total_harga_semua FROM barang";
+    $result = $conn->query($query);
+
+    if ($result->num_rows > 0) {
+        // Ambil hasil query
+        $row = $result->fetch_assoc();
+        $total_harga_semua = $row['total_harga_semua'];
+    } else {
+        $total_harga_semua = 0; // Jika tidak ada data, set total pengeluaran ke 0
+    }
+}
+
+// Query untuk menghitung jumlah barang
+$query = "SELECT COUNT(*) as total_barang FROM barang";
+$result = $conn->query($query);
+
+if ($result->num_rows > 0) {
+    // Ambil hasil query
+    $row = $result->fetch_assoc();
+    $jumlah_barang = $row['total_barang'];
+} else {
+    $jumlah_barang = 0; // Jika tidak ada data, set jumlah barang ke 0
+}
+
+// Query untuk menghitung total pelanggan
+$query = "SELECT COUNT(*) as total_pelanggan FROM pelanggan";
+$result = $conn->query($query);
+
+if ($result->num_rows > 0) {
+    // Ambil hasil
+    $row = $result->fetch_assoc();
+    $total_pelanggan = $row['total_pelanggan'];
+} else {
+    $total_pelanggan = 0; // Jika tidak ada data, set total pelanggan ke 0
+}
+
+// Contoh nilai lain (social dan referral) untuk diagram pie
+// Misalnya nilai tetap atau dari query database lain
+$jumlah_referral = 30; // Misalnya nilai tetap atau dari query database lain
+
+$id = $_SESSION['id']; // Pastikan variabel sesi sesuai dengan kolom di database
+
+// Ambil data pengguna dari database
+$query = "SELECT username FROM user WHERE id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$stmt->bind_result($username);
+$stmt->fetch();
+$stmt->close();
+
+$conn->close();
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,9 +130,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content=""> 
 
-    <title>SB Admin 2 - Cards</title>
+    <title>SB Admin 2 - Dashboard</title>
+
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -20,10 +146,11 @@
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="css/styleoke.css">
+
 </head>
 
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -32,19 +159,19 @@
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                <i class="fa-solid fa-gem" style="font-size: 25px;"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+                <div class="sidebar-brand-text mx-2">Pilar solusi</div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
-                <a class="nav-link" href="index.html">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
+            <li class="nav-item active">
+                <a class="nav-link" href="index.php">
+                    <i class="fa fa-home"></i>
                     <span>Dashboard</span></a>
             </li>
 
@@ -55,20 +182,30 @@
             <div class="sidebar-heading">
                 Interface
             </div>
+            <li class="nav-item">
+                <a class="nav-link" href="internet_home.php">
+                <i class="fa-solid fa-wifi"></i>
+                    <span>Internet Home</span></a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="data_barang.php">
+                <i class="fas fa-box"></i>
+                    <span>Data Barang</span></a>
+            </li>
 
             <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item active">
-                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
-                    aria-controls="collapseTwo">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>Components</span>
+                    <span>Tabel Data</span>
                 </a>
-                <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
-                    data-parent="#accordionSidebar">
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
+                    <h6 class="collapse-header">Tes</h6>
                         <a class="collapse-item" href="buttons.html">Buttons</a>
-                        <a class="collapse-item active" href="cards.html">Cards</a>
+                        <a class="collapse-item" href="cards.html">Cards</a>
                     </div>
                 </div>
             </li>
@@ -130,9 +267,9 @@
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span></a>
+                <a class="nav-link" href="kalender.php">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Kalender</span></a>
             </li>
 
             <!-- Divider -->
@@ -253,103 +390,41 @@
                         </li>
 
                         <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                            </div>
-                        </li>
-
+                        <button class="theme"><i class="fa-solid fa-sun" id="icon"></i></button>
+                       
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                                <img class="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg">
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
+    <a class="nav-link dropdown-toggle" id="userDropdown" role="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($username); ?></span>
+        <img class="img-profile rounded-circle"
+        src="img/undraw_profile.svg">
+    </a>
+    <!-- Dropdown - User Information -->
+    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+        aria-labelledby="userDropdown">
+        <a class="dropdown-item" href="profile.php">
+            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+            Profile
+        </a>
+        <a class="dropdown-item" href="settings.php">
+            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+            Settings
+        </a>
+        <a class="dropdown-item" href="activity_log.php">
+            <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+            Activity Log
+        </a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="logout.php">
+            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+            Logout
+        </a>
+    </div>
+</li>
+
 
                     </ul>
 
@@ -359,77 +434,144 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Cards</h1>
-                    </div>
+                     <!-- Page Heading -->
+                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    <div>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+        <!-- Tombol Filter -->
+        <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#filterModal">
+            Filter
+        </button>
+    </div>
+</div>
 
+<!-- Modal untuk Filter -->
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filter Pemasukan dan Pengeluaran</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span class="close">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="filterForm" method="POST" action="">
+                    <div class="form-group">
+                        <label for="bulan">Pilih Bulan:</label>
+                        <input type="month" id="bulan" name="bulan" class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="applyFilter()">Apply Filter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function applyFilter() {
+        // Ambil nilai dari input bulan
+        var selectedMonth = document.getElementById("bulan").value;
+
+        if (selectedMonth) {
+            // Contoh: Mengirim nilai ke server menggunakan AJAX
+            console.log('Filter applied for month: ' + selectedMonth);
+
+            // Contoh AJAX sederhana untuk mengirim data ke server tanpa reload halaman
+            /*
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "your-server-endpoint.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Tanggapan dari server bisa ditampilkan atau digunakan di sini
+                    console.log(xhr.responseText);
+                }
+            };
+            xhr.send("bulan=" + selectedMonth);
+            */
+
+            // Atau bisa submit form jika ada form di dalam modal
+            document.getElementById("filterForm").submit();
+        } else {
+            alert("Silakan pilih bulan terlebih dahulu.");
+        }
+    }
+</script>
+
+
+
+
+                    <!-- Content Row -->
                     <div class="row">
 
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Jumlah Barang</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        <?php echo htmlspecialchars($jumlah_barang); ?>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-box fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                        <!-- Earnings (Annual) Card Example -->
+                        <!-- Earnings (Monthly) Card Example -->
+                        <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Earnings (Annual)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                                Pemasukan Keuangan</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                Rp <?= number_format($total_pemasukan * 1000, 0, ',', '.'); ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Tasks Card Example -->
+
+                        <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card border-left-danger shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
-                                            </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
+                                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                                Pengeluaran Keuangan</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php echo "Rp " . number_format($total_harga_semua , 0, ',', '.'); ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
+                                            <i class="fas fa-arrow-down fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                        
 
                         <!-- Pending Requests Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
@@ -438,11 +580,13 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                                Total Pelanggan</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php echo $total_pelanggan; ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                            <i class="fa-solid fa-users fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
