@@ -102,9 +102,36 @@ if ($result->num_rows > 0) {
     $total_pelanggan = 0; // Jika tidak ada data, set total pelanggan ke 0
 }
 
+// Query untuk mengambil total pemasukan per bulan
+$query = "SELECT MONTH(tanggal_pembayaran) as bulan, SUM(nominal_bayar) as total_pemasukan 
+          FROM pembayaran 
+          GROUP BY MONTH(tanggal_pembayaran)";
+$result = $conn->query($query);
+
+$months = [];
+$earnings = [];
+
+// Cek apakah ada hasil dari query
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        // Gunakan nama bulan dalam teks atau angka
+        $months[] = date('M', mktime(0, 0, 0, $row['bulan'], 10)); // Jan, Feb, Mar, dst.
+        // Masukkan total pemasukan tanpa format terlebih dahulu
+        $earnings[] = $row['total_pemasukan'];
+    }
+} else {
+    // Jika tidak ada data, kirim array kosong atau 0
+    $months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    $earnings = array_fill(0, 12, 0); // Semua bulan diisi dengan 0
+}
+
+// Kirim data ke JavaScript dalam format JSON
+$months_json = json_encode($months);
+$earnings_json = json_encode($earnings);
+
 // Contoh nilai lain (social dan referral) untuk diagram pie
 // Misalnya nilai tetap atau dari query database lain
-$jumlah_referral = 30; // Misalnya nilai tetap atau dari query database lain
+// Misalnya nilai tetap atau dari query database lain
 
 $id = $_SESSION['id']; // Pastikan variabel sesi sesuai dengan kolom di database
 
@@ -116,7 +143,6 @@ $stmt->execute();
 $stmt->bind_result($username);
 $stmt->fetch();
 $stmt->close();
-
 $conn->close();
 ?>
 
@@ -876,7 +902,6 @@ $conn->close();
     <script src="vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
     <script src="vendor/chart.js/Chart.min.js"></script>
 
@@ -928,40 +953,20 @@ $conn->close();
 
 </body>
 <script>
-// Set new default font family and font color to mimic Bootstrap's default styling
-Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-Chart.defaults.global.defaultFontColor = '#858796';
+// Data dari PHP
+var months = <?php echo $months_json; ?>;
+var earnings = <?php echo $earnings_json; ?>;
 
-function number_format(number, decimals, dec_point, thousands_sep) {
-  // *     example: number_format(1234.56, 2, ',', ' ');
-  // *     return: '1 234,56'
-  number = (number + '').replace(',', '').replace(' ', '');
-  var n = !isFinite(+number) ? 0 : +number,
-    prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-    sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-    dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-    s = '',
-    toFixedFix = function(n, prec) {
-      var k = Math.pow(10, prec);
-      return '' + Math.round(n * k) / k;
-    };
-  s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
-  if (s[0].length > 3) {
-    s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, sep);
-  }
-  if ((s[1] || '').length < prec) {
-    s[1] = s[1] || '';
-    s[1] += new Array(prec - s[1].length + 1).join('0');
-  }
-  return s.join(dec);
+// Fungsi untuk memformat angka menjadi format Rupiah
+function number_format(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-// Area Chart Example
 var ctx = document.getElementById("myAreaChart");
 var myLineChart = new Chart(ctx, {
   type: 'line',
   data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: months, // Bulan dari PHP
     datasets: [{
       label: "Earnings",
       lineTension: 0.3,
@@ -975,7 +980,7 @@ var myLineChart = new Chart(ctx, {
       pointHoverBorderColor: "rgba(78, 115, 223, 1)",
       pointHitRadius: 10,
       pointBorderWidth: 2,
-      data: [0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000],
+      data: earnings, // Data pemasukan dari PHP
     }],
   },
   options: {
@@ -991,23 +996,22 @@ var myLineChart = new Chart(ctx, {
     scales: {
       xAxes: [{
         time: {
-          unit: 'date'
+          unit: 'month'
         },
         gridLines: {
           display: false,
           drawBorder: false
         },
         ticks: {
-          maxTicksLimit: 7
+          maxTicksLimit: 12 // Sesuaikan dengan jumlah bulan
         }
       }],
       yAxes: [{
         ticks: {
           maxTicksLimit: 5,
           padding: 10,
-          // Include a dollar sign in the ticks
           callback: function(value, index, values) {
-            return 'Rp ' + number_format(value);
+            return 'Rp ' + number_format(value); // Format ke Rupiah
           }
         },
         gridLines: {
@@ -1046,6 +1050,8 @@ var myLineChart = new Chart(ctx, {
   }
 });
 </script>
+
+
 
 
 </html>
