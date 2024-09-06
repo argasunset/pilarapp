@@ -104,8 +104,8 @@ if ($result->num_rows > 0) {
 
 // Query untuk mengambil total pemasukan per bulan
 $query = "SELECT MONTH(tanggal_pembayaran) as bulan, SUM(nominal_bayar) as total_pemasukan 
-          FROM pembayaran 
-          GROUP BY MONTH(tanggal_pembayaran)";
+FROM pembayaran 
+GROUP BY MONTH(tanggal_pembayaran)";
 $result = $conn->query($query);
 
 $months = [];
@@ -113,21 +113,22 @@ $earnings = [];
 
 // Cek apakah ada hasil dari query
 if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        // Gunakan nama bulan dalam teks atau angka
-        $months[] = date('M', mktime(0, 0, 0, $row['bulan'], 10)); // Jan, Feb, Mar, dst.
-        // Masukkan total pemasukan tanpa format terlebih dahulu
-        $earnings[] = $row['total_pemasukan'];
-    }
+while ($row = $result->fetch_assoc()) {
+// Gunakan nama bulan dalam teks atau angka
+$months[] = date('M', mktime(0, 0, 0, $row['bulan'], 10)); // Jan, Feb, Mar, dst.
+// Jangan format total pemasukan, simpan dalam bentuk angka
+$earnings[] = (int) $row['total_pemasukan']; // Pastikan total_pemasukan adalah angka
+}
 } else {
-    // Jika tidak ada data, kirim array kosong atau 0
-    $months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    $earnings = array_fill(0, 12, 0); // Semua bulan diisi dengan 0
+// Jika tidak ada data, kirim array kosong atau 0
+$months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+$earnings = array_fill(0, 12, 0); // Semua bulan diisi dengan 0
 }
 
 // Kirim data ke JavaScript dalam format JSON
 $months_json = json_encode($months);
 $earnings_json = json_encode($earnings);
+
 
 // Contoh nilai lain (social dan referral) untuk diagram pie
 // Misalnya nilai tetap atau dari query database lain
@@ -902,7 +903,6 @@ $conn->close();
     <script src="vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-pie-demo.js"></script>
     <script src="vendor/chart.js/Chart.min.js"></script>
 
 <script>
@@ -957,6 +957,11 @@ $conn->close();
 var months = <?php echo $months_json; ?>;
 var earnings = <?php echo $earnings_json; ?>;
 
+// Kalikan earnings dengan 1000 agar tampil sebagai ribuan
+earnings = earnings.map(function(value) {
+    return value * 1000;
+});
+
 // Fungsi untuk memformat angka menjadi format Rupiah
 function number_format(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -980,7 +985,7 @@ var myLineChart = new Chart(ctx, {
       pointHoverBorderColor: "rgba(78, 115, 223, 1)",
       pointHitRadius: 10,
       pointBorderWidth: 2,
-      data: earnings, // Data pemasukan dari PHP
+      data: earnings, // Data pemasukan yang sudah dikalikan 1000
     }],
   },
   options: {
