@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 04 Sep 2024 pada 05.41
+-- Waktu pembuatan: 06 Sep 2024 pada 07.41
 -- Versi server: 10.4.28-MariaDB
 -- Versi PHP: 8.0.28
 
@@ -36,13 +36,6 @@ CREATE TABLE `barang` (
   `total_harga` varchar(1000) GENERATED ALWAYS AS (`harga_satuan` * `qty`) STORED,
   `deskripsi` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `barang`
---
-
-INSERT INTO `barang` (`id`, `tanggal`, `nama_barang`, `harga_satuan`, `qty`, `deskripsi`) VALUES
-(2, '2024-09-01', 'Jenset', '12000', 2, 'ya');
 
 -- --------------------------------------------------------
 
@@ -121,7 +114,7 @@ INSERT INTO `pelanggan` (`id`, `nama_pelanggan`, `no_wa`, `alamat`, `paket_wifi`
 (42, 'Mang Ole', '-', 'Tanjakan', '10Mbps', '2023-07-28', 'Aktif'),
 (43, 'Pak Budi', '+6288-3191-2038', 'Puri Gita Kepongongan', '10Mbps', '2023-09-18', 'Aktif'),
 (44, 'Siti', '-', '-', '10Mbps', '0000-00-00', 'Tidak Aktif'),
-(45, 'Barepkan Sipopak', 'Voucher', 'Voucher', 'Voucher', '0000-00-00', 'Tidak Aktif'),
+(45, 'Barepkan Sipopak', 'Voucher', 'Voucher', 'Voucher', '0000-00-00', 'Aktif'),
 (46, 'Pak Marjo', '085864317555', '-', '10Mbps', '2023-10-02', 'Aktif'),
 (47, 'Lilis / Dedi Kurniawan', '62-815-6405-463', 'Lebakngok', '10Mbps', '2023-12-06', 'Aktif'),
 (48, 'Kusnia', '62-878-2215-4100', 'Krutug', '10Mbps', '2024-01-21', 'Aktif'),
@@ -144,15 +137,6 @@ CREATE TABLE `pembayaran` (
   `tanggal_pembayaran` varchar(50) DEFAULT NULL,
   `bukti_tf` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `pembayaran`
---
-
-INSERT INTO `pembayaran` (`id`, `pelanggan_id`, `nominal_bayar`, `kurang_bayar`, `bukti_transfer`, `terbilang`, `untuk_pembayaran`, `tanggal_pembayaran`, `bukti_tf`) VALUES
-(4, 3, '120.00', '80.00', NULL, 'SERATUS DUA PULUH RIBU', 'Wifi', '2024-08-01 00:00:00', 'Kwitansi.png'),
-(6, 2, '120.000', '80.000', NULL, 'SERATUS DUA PULUH RIBU', 'Wifi', '2024-08-21', 'Kwitansi.png'),
-(7, 1, '300.000', '20.000', NULL, 'TIGA RATUS RIBU', 'Susu', '2024-09-02', 'Kwitansi.png');
 
 -- --------------------------------------------------------
 
@@ -238,7 +222,7 @@ ALTER TABLE `pelanggan`
 -- AUTO_INCREMENT untuk tabel `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT untuk tabel `user`
