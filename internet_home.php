@@ -127,6 +127,12 @@ $conn->close();
                     <span>Data Barang</span></a>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link" href="mitra.php">
+                <i class="fa-solid fa-users"></i>
+                    <span>Mitra</span></a>
+            </li>
+
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"

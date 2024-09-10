@@ -164,10 +164,18 @@ $conn->close();
                     <span>Internet Home</span>
                 </a>
             </li>
+            
             <li class="nav-item">
                 <a class="nav-link" href="data_barang.php">
                     <i class="fas fa-box"></i>
                     <span>Data Barang</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="mitra.php">
+                <i class="fa-solid fa-users"></i>
+                    <span>Mitra</span>
                 </a>
             </li>
             <!-- Nav Item - Pages Collapse Menu -->
