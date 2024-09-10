@@ -479,7 +479,7 @@ $conn->close();
                 <h3 class="h3 mb-0 text-gray-800">Mitra</h3>
                 <p>Home / Dashboard</p>
                 
-                <div class="card mb-3 custom-card" onclick="window.location.href='kaligandu.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='kaligandu/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -493,7 +493,7 @@ $conn->close();
                 </div>
             </div>
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='transformer.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='transformer/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -507,7 +507,7 @@ $conn->close();
                 </div>
             </div>
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='oneqid.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='oneqid/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -521,7 +521,7 @@ $conn->close();
                 </div>
             </div>   
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='lebok-engok.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='lebokengok/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -535,7 +535,7 @@ $conn->close();
                 </div>
             </div>
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='kalitanjung.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='kalitanjung/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -549,7 +549,7 @@ $conn->close();
                 </div>
             </div>
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='iring-iring.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='iringiring/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -563,7 +563,7 @@ $conn->close();
                 </div>
             </div>
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='tanjakan.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='tanjakan/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -577,7 +577,7 @@ $conn->close();
                 </div>
             </div>
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='kemantren.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='kemantren/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -591,7 +591,7 @@ $conn->close();
                 </div>
             </div>
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='ozet.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='ozet/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -605,7 +605,7 @@ $conn->close();
                 </div>
             </div>
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='bojong.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='bojong/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -619,7 +619,7 @@ $conn->close();
                 </div>
             </div>
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='warung-duet.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='warungduet/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
@@ -633,7 +633,7 @@ $conn->close();
                 </div>
             </div>
 
-                <div class="card mb-3 custom-card" onclick="window.location.href='benjaran.php';" style="cursor: pointer;">
+                <div class="card mb-3 custom-card" onclick="window.location.href='benjaran/index.php';" style="cursor: pointer;">
                         <div class="row no-gutters">
                         <div class="col-md-4">
                         <img src="img/pilar-kayu.png" class="card-img" alt="...">
