@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 06 Sep 2024 pada 07.41
--- Versi server: 10.4.28-MariaDB
--- Versi PHP: 8.0.28
+-- Generation Time: Sep 10, 2024 at 10:45 AM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 8.1.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `barang`
+-- Table structure for table `barang`
 --
 
 CREATE TABLE `barang` (
@@ -35,24 +35,192 @@ CREATE TABLE `barang` (
   `qty` int(11) NOT NULL,
   `total_harga` varchar(1000) GENERATED ALWAYS AS (`harga_satuan` * `qty`) STORED,
   `deskripsi` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `events`
+-- Table structure for table `barangiringiring`
+--
+
+CREATE TABLE `barangiringiring` (
+  `id_iringiring` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `nama_barang` varchar(255) NOT NULL,
+  `harga_satuan` varchar(1000) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `total_harga` varchar(1000) GENERATED ALWAYS AS (`harga_satuan` * `qty`) STORED,
+  `deskripsi` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `barangkaligandu`
+--
+
+CREATE TABLE `barangkaligandu` (
+  `id_kaligandu` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `nama_barang` varchar(255) NOT NULL,
+  `harga_satuan` varchar(1000) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `total_harga` varchar(1000) GENERATED ALWAYS AS (`harga_satuan` * `qty`) STORED,
+  `deskripsi` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `barangkalitanjung`
+--
+
+CREATE TABLE `barangkalitanjung` (
+  `id_kalitanjung` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `nama_barang` varchar(255) NOT NULL,
+  `harga_satuan` varchar(1000) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `total_harga` varchar(1000) GENERATED ALWAYS AS (`harga_satuan` * `qty`) STORED,
+  `deskripsi` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `baranglebok`
+--
+
+CREATE TABLE `baranglebok` (
+  `id_lebok` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `nama_barang` varchar(255) NOT NULL,
+  `harga_satuan` varchar(1000) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `total_harga` varchar(1000) GENERATED ALWAYS AS (`harga_satuan` * `qty`) STORED,
+  `deskripsi` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `barangoneqid`
+--
+
+CREATE TABLE `barangoneqid` (
+  `id_oneqid` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `nama_barang` varchar(255) NOT NULL,
+  `harga_satuan` varchar(1000) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `total_harga` varchar(1000) GENERATED ALWAYS AS (`harga_satuan` * `qty`) STORED,
+  `deskripsi` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `barangtransformer`
+--
+
+CREATE TABLE `barangtransformer` (
+  `id_transformer` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `nama_barang` varchar(255) NOT NULL,
+  `harga_satuan` varchar(1000) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `total_harga` varchar(1000) GENERATED ALWAYS AS (`harga_satuan` * `qty`) STORED,
+  `deskripsi` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `events`
 --
 
 CREATE TABLE `events` (
   `id` int(11) NOT NULL,
   `event_date` date NOT NULL,
   `event_label` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pelanggan`
+-- Table structure for table `eventsiringiring`
+--
+
+CREATE TABLE `eventsiringiring` (
+  `id_iringiring` int(11) NOT NULL,
+  `evengt_date` date NOT NULL,
+  `event_label` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `eventskaligandu`
+--
+
+CREATE TABLE `eventskaligandu` (
+  `id_kaligandu` int(11) NOT NULL,
+  `event_date` date NOT NULL,
+  `event_label` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `eventskalitanjung`
+--
+
+CREATE TABLE `eventskalitanjung` (
+  `id_kalitanjung` int(11) NOT NULL,
+  `evengt_date` date NOT NULL,
+  `event_label` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `eventslebok`
+--
+
+CREATE TABLE `eventslebok` (
+  `id_lebok` int(11) NOT NULL,
+  `evengt_date` date NOT NULL,
+  `event_label` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `eventsoneqid`
+--
+
+CREATE TABLE `eventsoneqid` (
+  `id_oneqid` int(11) NOT NULL,
+  `evengt_date` date NOT NULL,
+  `event_label` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `eventstransformer`
+--
+
+CREATE TABLE `eventstransformer` (
+  `id_transformer` int(11) NOT NULL,
+  `event_date` date NOT NULL,
+  `event_label` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pelanggan`
 --
 
 CREATE TABLE `pelanggan` (
@@ -63,10 +231,10 @@ CREATE TABLE `pelanggan` (
   `paket_wifi` varchar(50) NOT NULL,
   `tanggal_aktivasi` date NOT NULL,
   `status` enum('Aktif','Tidak Aktif') DEFAULT 'Tidak Aktif'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data untuk tabel `pelanggan`
+-- Dumping data for table `pelanggan`
 --
 
 INSERT INTO `pelanggan` (`id`, `nama_pelanggan`, `no_wa`, `alamat`, `paket_wifi`, `tanggal_aktivasi`, `status`) VALUES
@@ -123,7 +291,103 @@ INSERT INTO `pelanggan` (`id`, `nama_pelanggan`, `no_wa`, `alamat`, `paket_wifi`
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pembayaran`
+-- Table structure for table `pelangganiringiring`
+--
+
+CREATE TABLE `pelangganiringiring` (
+  `id_pelangganiringiring` int(11) NOT NULL,
+  `nama_pelanggan` varchar(100) NOT NULL,
+  `no_wa` varchar(20) NOT NULL,
+  `alamat` text NOT NULL,
+  `paket_wifi` varchar(50) NOT NULL,
+  `tanggal_aktivasi` date NOT NULL,
+  `status` enum('Aktif','Tidak Aktif') DEFAULT 'Tidak Aktif'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pelanggankaligandu`
+--
+
+CREATE TABLE `pelanggankaligandu` (
+  `id_kaligandu` int(11) NOT NULL,
+  `nama_pelanggan` varchar(100) NOT NULL,
+  `no_wa` varchar(20) NOT NULL,
+  `alamat` text NOT NULL,
+  `paket_wifi` varchar(50) NOT NULL,
+  `tanggal_aktivasi` date NOT NULL,
+  `status` enum('Aktif','Tidak Aktif') DEFAULT 'Tidak Aktif'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pelanggankalitanjung`
+--
+
+CREATE TABLE `pelanggankalitanjung` (
+  `id_pelanggankalitanjung` int(11) NOT NULL,
+  `nama_pelanggan` varchar(100) NOT NULL,
+  `no_wa` varchar(20) NOT NULL,
+  `alamat` text NOT NULL,
+  `paket_wifi` varchar(50) NOT NULL,
+  `tanggal_aktivasi` date NOT NULL,
+  `status` enum('Aktif','Tidak Aktif') DEFAULT 'Tidak Aktif'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pelangganlebok`
+--
+
+CREATE TABLE `pelangganlebok` (
+  `id_pelangganlebok` int(11) NOT NULL,
+  `nama_pelanggan` varchar(100) NOT NULL,
+  `no_wa` varchar(20) NOT NULL,
+  `alamat` text NOT NULL,
+  `paket_wifi` varchar(50) NOT NULL,
+  `tanggal_aktivasi` date NOT NULL,
+  `status` enum('Aktif','Tidak Aktif') DEFAULT 'Tidak Aktif'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pelangganoneqid`
+--
+
+CREATE TABLE `pelangganoneqid` (
+  `id_pelangganOneqid` int(11) NOT NULL,
+  `nama_pelanggan` varchar(100) NOT NULL,
+  `no_wa` varchar(20) NOT NULL,
+  `alamat` text NOT NULL,
+  `paket_wifi` varchar(50) NOT NULL,
+  `tanggal_aktivasi` date NOT NULL,
+  `status` enum('Aktif','Tidak Aktif') DEFAULT 'Tidak Aktif'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pelanggantransformer`
+--
+
+CREATE TABLE `pelanggantransformer` (
+  `id_pelangganTransformer` int(11) NOT NULL,
+  `nama_pelanggan` varchar(100) NOT NULL,
+  `no_wa` varchar(20) NOT NULL,
+  `alamat` text NOT NULL,
+  `paket_wifi` varchar(50) NOT NULL,
+  `tanggal_aktivasi` date NOT NULL,
+  `status` enum('Aktif','Tidak Aktif') DEFAULT 'Tidak Aktif'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembayaran`
 --
 
 CREATE TABLE `pembayaran` (
@@ -136,12 +400,120 @@ CREATE TABLE `pembayaran` (
   `untuk_pembayaran` varchar(255) DEFAULT NULL,
   `tanggal_pembayaran` varchar(50) DEFAULT NULL,
   `bukti_tf` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `user`
+-- Table structure for table `pembayaraniringiring`
+--
+
+CREATE TABLE `pembayaraniringiring` (
+  `id_iringiring` int(11) NOT NULL,
+  `id_pelangganIringIring` int(11) DEFAULT NULL,
+  `nominal_bayar` varchar(50) DEFAULT NULL,
+  `kurang_bayar` varchar(50) DEFAULT NULL,
+  `bukti_transfer` varchar(255) DEFAULT NULL,
+  `terbilang` varchar(255) DEFAULT NULL,
+  `untuk_pembayaran` varchar(255) DEFAULT NULL,
+  `tanggal_pembayaran` varchar(50) DEFAULT NULL,
+  `bukti_tf` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembayarankaligandu`
+--
+
+CREATE TABLE `pembayarankaligandu` (
+  `id_kaligandu` int(11) NOT NULL,
+  `pelanggan_id` int(11) DEFAULT NULL,
+  `nominal_bayar` varchar(50) DEFAULT NULL,
+  `kurang_bayar` varchar(50) DEFAULT NULL,
+  `bukti_transfer` varchar(255) DEFAULT NULL,
+  `terbilang` varchar(255) DEFAULT NULL,
+  `untuk_pembayaran` varchar(255) DEFAULT NULL,
+  `tanggal_pembayaran` varchar(50) DEFAULT NULL,
+  `bukti_tf` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembayarankalitanjung`
+--
+
+CREATE TABLE `pembayarankalitanjung` (
+  `id_kalitanjung` int(11) NOT NULL,
+  `id_pelangganKalitanjung` int(11) DEFAULT NULL,
+  `nominal_bayar` varchar(50) DEFAULT NULL,
+  `kurang_bayar` varchar(50) DEFAULT NULL,
+  `bukti_transfer` varchar(255) DEFAULT NULL,
+  `terbilang` varchar(255) DEFAULT NULL,
+  `untuk_pembayaran` varchar(255) DEFAULT NULL,
+  `tanggal_pembayaran` varchar(50) DEFAULT NULL,
+  `bukti_tf` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembayaranlebok`
+--
+
+CREATE TABLE `pembayaranlebok` (
+  `id_lebok` int(11) NOT NULL,
+  `id_pelangganLebok` int(11) DEFAULT NULL,
+  `nominal_bayar` varchar(50) DEFAULT NULL,
+  `kurang_bayar` varchar(50) DEFAULT NULL,
+  `bukti_transfer` varchar(255) DEFAULT NULL,
+  `terbilang` varchar(255) DEFAULT NULL,
+  `untuk_pembayaran` varchar(255) DEFAULT NULL,
+  `tanggal_pembayaran` varchar(50) DEFAULT NULL,
+  `bukti_tf` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembayaranoneqid`
+--
+
+CREATE TABLE `pembayaranoneqid` (
+  `id_oneqid` int(11) NOT NULL,
+  `id_pelangganOneqid` int(11) DEFAULT NULL,
+  `nominal_bayar` varchar(50) DEFAULT NULL,
+  `kurang_bayar` varchar(50) DEFAULT NULL,
+  `bukti_transfer` varchar(255) DEFAULT NULL,
+  `terbilang` varchar(255) DEFAULT NULL,
+  `untuk_pembayaran` varchar(255) DEFAULT NULL,
+  `tanggal_pembayaran` varchar(50) DEFAULT NULL,
+  `bukti_tf` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembayarantransformer`
+--
+
+CREATE TABLE `pembayarantransformer` (
+  `id_transformer` int(11) NOT NULL,
+  `id_pelangganTransformer` int(11) DEFAULT NULL,
+  `nominal_bayar` varchar(50) DEFAULT NULL,
+  `kurang_bayar` varchar(50) DEFAULT NULL,
+  `bukti_transfer` varchar(255) DEFAULT NULL,
+  `terbilang` varchar(255) DEFAULT NULL,
+  `untuk_pembayaran` varchar(255) DEFAULT NULL,
+  `tanggal_pembayaran` varchar(50) DEFAULT NULL,
+  `bukti_tf` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
@@ -149,10 +521,10 @@ CREATE TABLE `user` (
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('admin','manajemen','teknisi') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data untuk tabel `user`
+-- Dumping data for table `user`
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
@@ -166,79 +538,409 @@ INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
 --
 
 --
--- Indeks untuk tabel `barang`
+-- Indexes for table `barang`
 --
 ALTER TABLE `barang`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `events`
+-- Indexes for table `barangiringiring`
+--
+ALTER TABLE `barangiringiring`
+  ADD PRIMARY KEY (`id_iringiring`);
+
+--
+-- Indexes for table `barangkaligandu`
+--
+ALTER TABLE `barangkaligandu`
+  ADD PRIMARY KEY (`id_kaligandu`);
+
+--
+-- Indexes for table `barangkalitanjung`
+--
+ALTER TABLE `barangkalitanjung`
+  ADD PRIMARY KEY (`id_kalitanjung`);
+
+--
+-- Indexes for table `baranglebok`
+--
+ALTER TABLE `baranglebok`
+  ADD PRIMARY KEY (`id_lebok`);
+
+--
+-- Indexes for table `barangoneqid`
+--
+ALTER TABLE `barangoneqid`
+  ADD PRIMARY KEY (`id_oneqid`);
+
+--
+-- Indexes for table `barangtransformer`
+--
+ALTER TABLE `barangtransformer`
+  ADD PRIMARY KEY (`id_transformer`);
+
+--
+-- Indexes for table `events`
 --
 ALTER TABLE `events`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `pelanggan`
+-- Indexes for table `eventsiringiring`
+--
+ALTER TABLE `eventsiringiring`
+  ADD PRIMARY KEY (`id_iringiring`);
+
+--
+-- Indexes for table `eventskaligandu`
+--
+ALTER TABLE `eventskaligandu`
+  ADD PRIMARY KEY (`id_kaligandu`);
+
+--
+-- Indexes for table `eventskalitanjung`
+--
+ALTER TABLE `eventskalitanjung`
+  ADD PRIMARY KEY (`id_kalitanjung`);
+
+--
+-- Indexes for table `eventslebok`
+--
+ALTER TABLE `eventslebok`
+  ADD PRIMARY KEY (`id_lebok`);
+
+--
+-- Indexes for table `eventsoneqid`
+--
+ALTER TABLE `eventsoneqid`
+  ADD PRIMARY KEY (`id_oneqid`);
+
+--
+-- Indexes for table `eventstransformer`
+--
+ALTER TABLE `eventstransformer`
+  ADD PRIMARY KEY (`id_transformer`);
+
+--
+-- Indexes for table `pelanggan`
 --
 ALTER TABLE `pelanggan`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `pembayaran`
+-- Indexes for table `pelangganiringiring`
+--
+ALTER TABLE `pelangganiringiring`
+  ADD PRIMARY KEY (`id_pelangganiringiring`);
+
+--
+-- Indexes for table `pelanggankaligandu`
+--
+ALTER TABLE `pelanggankaligandu`
+  ADD PRIMARY KEY (`id_kaligandu`);
+
+--
+-- Indexes for table `pelanggankalitanjung`
+--
+ALTER TABLE `pelanggankalitanjung`
+  ADD PRIMARY KEY (`id_pelanggankalitanjung`);
+
+--
+-- Indexes for table `pelangganlebok`
+--
+ALTER TABLE `pelangganlebok`
+  ADD PRIMARY KEY (`id_pelangganlebok`);
+
+--
+-- Indexes for table `pelangganoneqid`
+--
+ALTER TABLE `pelangganoneqid`
+  ADD PRIMARY KEY (`id_pelangganOneqid`);
+
+--
+-- Indexes for table `pelanggantransformer`
+--
+ALTER TABLE `pelanggantransformer`
+  ADD PRIMARY KEY (`id_pelangganTransformer`);
+
+--
+-- Indexes for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
   ADD PRIMARY KEY (`id`),
   ADD KEY `pelanggan_id` (`pelanggan_id`);
 
 --
--- Indeks untuk tabel `user`
+-- Indexes for table `pembayaraniringiring`
+--
+ALTER TABLE `pembayaraniringiring`
+  ADD PRIMARY KEY (`id_iringiring`),
+  ADD KEY `id_pelangganIringIring` (`id_pelangganIringIring`);
+
+--
+-- Indexes for table `pembayarankaligandu`
+--
+ALTER TABLE `pembayarankaligandu`
+  ADD PRIMARY KEY (`id_kaligandu`),
+  ADD KEY `pelanggan_id` (`pelanggan_id`);
+
+--
+-- Indexes for table `pembayarankalitanjung`
+--
+ALTER TABLE `pembayarankalitanjung`
+  ADD PRIMARY KEY (`id_kalitanjung`),
+  ADD KEY `id_pelangganKalitanjung` (`id_pelangganKalitanjung`);
+
+--
+-- Indexes for table `pembayaranlebok`
+--
+ALTER TABLE `pembayaranlebok`
+  ADD PRIMARY KEY (`id_lebok`),
+  ADD KEY `id_pelangganLebok` (`id_pelangganLebok`);
+
+--
+-- Indexes for table `pembayaranoneqid`
+--
+ALTER TABLE `pembayaranoneqid`
+  ADD PRIMARY KEY (`id_oneqid`),
+  ADD KEY `id_pelangganOneqid` (`id_pelangganOneqid`);
+
+--
+-- Indexes for table `pembayarantransformer`
+--
+ALTER TABLE `pembayarantransformer`
+  ADD PRIMARY KEY (`id_transformer`),
+  ADD KEY `id_pelangganTransformer` (`id_pelangganTransformer`);
+
+--
+-- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `barang`
+-- AUTO_INCREMENT for table `barang`
 --
 ALTER TABLE `barang`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `events`
+-- AUTO_INCREMENT for table `barangiringiring`
+--
+ALTER TABLE `barangiringiring`
+  MODIFY `id_iringiring` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `barangkaligandu`
+--
+ALTER TABLE `barangkaligandu`
+  MODIFY `id_kaligandu` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `barangkalitanjung`
+--
+ALTER TABLE `barangkalitanjung`
+  MODIFY `id_kalitanjung` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `baranglebok`
+--
+ALTER TABLE `baranglebok`
+  MODIFY `id_lebok` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `barangoneqid`
+--
+ALTER TABLE `barangoneqid`
+  MODIFY `id_oneqid` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `barangtransformer`
+--
+ALTER TABLE `barangtransformer`
+  MODIFY `id_transformer` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `events`
 --
 ALTER TABLE `events`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `pelanggan`
+-- AUTO_INCREMENT for table `eventsiringiring`
+--
+ALTER TABLE `eventsiringiring`
+  MODIFY `id_iringiring` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `eventskaligandu`
+--
+ALTER TABLE `eventskaligandu`
+  MODIFY `id_kaligandu` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `eventskalitanjung`
+--
+ALTER TABLE `eventskalitanjung`
+  MODIFY `id_kalitanjung` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `eventslebok`
+--
+ALTER TABLE `eventslebok`
+  MODIFY `id_lebok` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `eventsoneqid`
+--
+ALTER TABLE `eventsoneqid`
+  MODIFY `id_oneqid` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `eventstransformer`
+--
+ALTER TABLE `eventstransformer`
+  MODIFY `id_transformer` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pelanggan`
 --
 ALTER TABLE `pelanggan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
--- AUTO_INCREMENT untuk tabel `pembayaran`
+-- AUTO_INCREMENT for table `pelangganiringiring`
+--
+ALTER TABLE `pelangganiringiring`
+  MODIFY `id_pelangganiringiring` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pelanggankaligandu`
+--
+ALTER TABLE `pelanggankaligandu`
+  MODIFY `id_kaligandu` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pelanggankalitanjung`
+--
+ALTER TABLE `pelanggankalitanjung`
+  MODIFY `id_pelanggankalitanjung` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pelangganlebok`
+--
+ALTER TABLE `pelangganlebok`
+  MODIFY `id_pelangganlebok` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pelangganoneqid`
+--
+ALTER TABLE `pelangganoneqid`
+  MODIFY `id_pelangganOneqid` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pelanggantransformer`
+--
+ALTER TABLE `pelanggantransformer`
+  MODIFY `id_pelangganTransformer` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
--- AUTO_INCREMENT untuk tabel `user`
+-- AUTO_INCREMENT for table `pembayaraniringiring`
+--
+ALTER TABLE `pembayaraniringiring`
+  MODIFY `id_iringiring` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pembayarankaligandu`
+--
+ALTER TABLE `pembayarankaligandu`
+  MODIFY `id_kaligandu` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pembayarankalitanjung`
+--
+ALTER TABLE `pembayarankalitanjung`
+  MODIFY `id_kalitanjung` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pembayaranlebok`
+--
+ALTER TABLE `pembayaranlebok`
+  MODIFY `id_lebok` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pembayaranoneqid`
+--
+ALTER TABLE `pembayaranoneqid`
+  MODIFY `id_oneqid` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pembayarantransformer`
+--
+ALTER TABLE `pembayarantransformer`
+  MODIFY `id_transformer` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+-- Constraints for dumped tables
 --
 
 --
--- Ketidakleluasaan untuk tabel `pembayaran`
+-- Constraints for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
   ADD CONSTRAINT `pembayaran_ibfk_1` FOREIGN KEY (`pelanggan_id`) REFERENCES `pelanggan` (`id`);
+
+--
+-- Constraints for table `pembayaraniringiring`
+--
+ALTER TABLE `pembayaraniringiring`
+  ADD CONSTRAINT `pembayaraniringiring_ibfk_1` FOREIGN KEY (`id_pelangganIringIring`) REFERENCES `pelangganiringiring` (`id_pelangganiringiring`);
+
+--
+-- Constraints for table `pembayarankaligandu`
+--
+ALTER TABLE `pembayarankaligandu`
+  ADD CONSTRAINT `pembayarankaligandu_ibfk_1` FOREIGN KEY (`pelanggan_id`) REFERENCES `pelanggankaligandu` (`id_kaligandu`);
+
+--
+-- Constraints for table `pembayarankalitanjung`
+--
+ALTER TABLE `pembayarankalitanjung`
+  ADD CONSTRAINT `pembayarankalitanjung_ibfk_1` FOREIGN KEY (`id_pelangganKalitanjung`) REFERENCES `pelanggankalitanjung` (`id_pelanggankalitanjung`);
+
+--
+-- Constraints for table `pembayaranlebok`
+--
+ALTER TABLE `pembayaranlebok`
+  ADD CONSTRAINT `pembayaranlebok_ibfk_1` FOREIGN KEY (`id_pelangganLebok`) REFERENCES `pelangganlebok` (`id_pelangganlebok`);
+
+--
+-- Constraints for table `pembayaranoneqid`
+--
+ALTER TABLE `pembayaranoneqid`
+  ADD CONSTRAINT `pembayaranoneqid_ibfk_1` FOREIGN KEY (`id_pelangganOneqid`) REFERENCES `pelangganoneqid` (`id_pelangganOneqid`);
+
+--
+-- Constraints for table `pembayarantransformer`
+--
+ALTER TABLE `pembayarantransformer`
+  ADD CONSTRAINT `pembayarantransformer_ibfk_1` FOREIGN KEY (`id_pelangganTransformer`) REFERENCES `pelanggantransformer` (`id_pelangganTransformer`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
